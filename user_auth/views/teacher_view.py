@@ -10,7 +10,7 @@ from drf_yasg import openapi
 
 class Crud_Teacher(APIView):
     @swagger_auto_schema(
-        request_body=TeacherSerializer
+        responses={200: TeacherSerializer(many=True)}
     )
     def get(self, request):
         teachers = Teacher.objects.all()

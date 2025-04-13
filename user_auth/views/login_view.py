@@ -92,9 +92,11 @@ class RegisterUserApi(APIView):
                 "status":True,
                 'datail':'account create'
             })
+
+    @swagger_auto_schema(responses={200: UserSerializer(many=True)})
     def get(self,request):
         users=User.objects.all().order_by("-id")
-        serializer=UserSerializer(User,many=True)
+        serializer=UserSerializer(users,many=True)
         return Response(data=serializer.data)
 
 
