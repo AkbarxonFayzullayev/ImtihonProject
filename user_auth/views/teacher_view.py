@@ -1,9 +1,8 @@
 from django.db import transaction
-from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.views import APIView
 from ..models.model_teacher import *
-from ..serializers import TeacherSerializer, TeacherCreateSerializer
+from ..serializers import TeacherSerializer, TeacherCreateSerializer, TeacherPostSerializer
 from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -90,3 +89,23 @@ class Crud_Teacher(APIView):
                 {"detail": f"O'chirib bo'lmadi: {str(e)}"},
                 status=status.HTTP_400_BAD_REQUEST
             )
+
+class Teacher_Api(APIView):
+    @swagger_auto_schema(
+        responses={200: TeacherSerializer(many=True)}
+    )
+    def get(self,request):
+        teachers = Teacher.objects.all()
+        serializer = TeacherSerializer(teachers,many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(
+        request_body=TeacherPostSerializer
+    )
+    def post(self,request):
+        serializer = TeacherPostSerializer(data=request.data)
+        if serializer.is_valid():
+            teacher = serializer.save()
+            response_serializer = TeacherSerializer(teacher)
+            return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

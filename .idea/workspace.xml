@@ -6,8 +6,22 @@
   <component name="ChangeListManager">
     <list default="true" id="db1ca78f-0e51-4d41-83c0-5f7a526791d8" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/config/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user_auth/views/login_view.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/views/login_view.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/config/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/configapp/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/configapp/admin.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/configapp/apps.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/configapp/migrations/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/configapp/models.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/configapp/tests.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/configapp/views.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/models/auth_users.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/models/auth_users.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/models/model_group.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/models/model_group.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/models/model_student.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/models/model_student.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/models/model_teacher.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/models/model_teacher.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/serializers/login_serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/serializers/login_serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/serializers/teacher_serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/serializers/teacher_serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/views/teacher_view.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/views/teacher_view.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,12 +44,12 @@
     &quot;assignee&quot;: &quot;AkbarxonFayzullayev&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/AkbarxonFayzullayev/Amalyot.git&quot;,
-    &quot;accountId&quot;: &quot;0dbb9c00-7e27-4932-9820-731819e00e60&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/AkbarxonFayzullayev/Permission.git",
+    "accountId": "0dbb9c00-7e27-4932-9820-731819e00e60"
   }
-}</component>
+}]]></component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 3
 }</component>

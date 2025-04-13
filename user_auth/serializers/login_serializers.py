@@ -81,7 +81,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = (
-        'id', 'phone', 'password', "full_name", 'is_active', 'is_staff', "is_teacher", 'is_admin', 'is_student')
+        'id', 'phone_number', 'password', "username", 'is_active', 'is_staff', "is_teacher", 'is_admin', 'is_student')
 
 
 class ChangePasswordSerializer(serializers.ModelSerializer):

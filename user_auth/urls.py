@@ -19,6 +19,7 @@ urlpatterns = [
     path("get_phone/",PhoneSendOTP.as_view()),
     path("post_phone/",VerifySMS.as_view()),
     path('crud_teacher/',Crud_Teacher.as_view()),
+    path('teacher_api/',Teacher_Api.as_view()),
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 

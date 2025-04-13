@@ -3,15 +3,13 @@ from django.db import models
 from django.contrib.auth.models import BaseUserManager
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 
+
 class BaseModel(models.Model):
     created_ed = models.DateField(auto_now_add=True)
     updated_ed = models.DateField(auto_now=True)
 
     class Meta:
         abstract = True
-
-
-
 
 
 class CustomUserManager(BaseUserManager):
@@ -41,9 +39,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         regex=r'^\+998\d{9}$',
         message="Telefon raqam '+998XXXXXXXXX' formatida bo'lishi kerak!"
     )
-    username=models.CharField(max_length=25)
+    username = models.CharField(max_length=25)
     email = models.EmailField(unique=True, null=True, blank=True)
-    phone_number = models.CharField(validators=[phone_regex],max_length=13, unique=True)
+    phone_number = models.CharField(validators=[phone_regex], max_length=13, unique=True)
     is_admin = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
