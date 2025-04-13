@@ -1,13 +1,8 @@
 import random
-
-
 import permission
-
 from ..make_token import *
-
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
-
 from django.contrib.auth.hashers import make_password
 from rest_framework import status,permissions
 from ..serializers import *
@@ -19,7 +14,6 @@ from ..models import User
 from ..serializers import SMSSerializer
 from drf_yasg.utils import swagger_auto_schema
 
-
 class PhoneSendOTP(APIView):
     @swagger_auto_schema(request_body=SMSSerializer)
     def post(self, request, *args, **kwargs):
@@ -28,7 +22,6 @@ class PhoneSendOTP(APIView):
         if not phone_number:
             return Response({
                 'status': False,
-                'detail': 'Telefon raqam kiritilmadi'
             }, status=status.HTTP_400_BAD_REQUEST)
 
         phone = str(phone_number)
@@ -113,15 +106,6 @@ class ChangePasswordView(APIView):
             serializer.save()
             return Response(serializer.data,status=status.HTTP_200_OK)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-
-
-
-
-
-
-
-
-
 
 class LoginApi(APIView):
     permission_classes = [AllowAny,]

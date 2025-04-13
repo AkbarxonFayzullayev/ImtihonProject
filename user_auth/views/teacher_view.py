@@ -65,9 +65,6 @@ class Crud_Teacher(APIView):
         except Exception as e:
             return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-
-
-
     def delete(self, request):
         phone_number = request.data.get("phone_number")
 

@@ -1,10 +1,7 @@
 from django.contrib.auth import authenticate
 from django.db import transaction
-
 from rest_framework import serializers
 from user_auth.models import *
-
-
 
 class LoginSerializer(serializers.Serializer):
     username=serializers.CharField()
@@ -32,16 +29,6 @@ class LoginSerializer(serializers.Serializer):
             )
         attrs["user"]=auth_user
         return attrs
-
-
-
-
-
-
-
-
-
-
 
 class TeacherCreateSerializer(serializers.ModelSerializer):
     phone_number = serializers.CharField(write_only=True)
@@ -84,18 +71,6 @@ class TeacherCreateSerializer(serializers.ModelSerializer):
 
         except Exception as e:
             raise serializers.ValidationError(str(e))
-
-
-
-# ========================================
-
-
-
-
-
-
-
-
 
 
 from rest_framework import serializers
@@ -149,21 +124,15 @@ class VerifySMSSerializer(serializers.Serializer):
     phone_number = serializers.CharField()
     verification_code = serializers.CharField()
 
-
 class CourseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
         fields = ['id', 'title', 'descriptions']
 
-
 class DepartmentsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Departments
         fields = ['id', 'title', 'is_active', 'descriptions']
-
-
-
-
 
 class RoomSerializer(serializers.ModelSerializer):
     class Meta:

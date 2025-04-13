@@ -5,27 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="db1ca78f-0e51-4d41-83c0-5f7a526791d8" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/ImtihonProject.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user_auth/make_token.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user_auth/models/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user_auth/models/auth_users.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user_auth/models/model_group.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user_auth/models/model_student.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user_auth/models/model_table.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user_auth/models/model_teacher.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user_auth/serializers/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user_auth/serializers/login_serializers.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user_auth/serializers/teacher_serializers.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user_auth/urls.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user_auth/views/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user_auth/views/login_view.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user_auth/views/teacher_view.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,6 +22,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "AkbarxonFayzullayev"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/AkbarxonFayzullayev/Amalyot.git",
+    "accountId": "0dbb9c00-7e27-4932-9820-731819e00e60"
+  }
+}]]></component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 3
 }</component>
@@ -51,13 +43,13 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true"
   }
-}</component>
+}]]></component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
