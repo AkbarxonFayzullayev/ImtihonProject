@@ -28,4 +28,4 @@ class Teacher(BaseModel):
     descriptions = models.CharField(max_length=500, blank=True, null=True)
 
     def __str__(self):
-        return f"{self.user.username} ({self.user.phone_number})"
+        return f"{self.user.phone_number}"

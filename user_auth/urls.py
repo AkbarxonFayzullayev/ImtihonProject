@@ -3,6 +3,7 @@ from django.contrib import admin
 from django.urls import path,include
 from rest_framework.routers import  DefaultRouter
 
+from user_auth.views.student_view import Student_Api
 from user_auth.views.teacher_view import Crud_Teacher
 
 router=DefaultRouter()
@@ -20,6 +21,7 @@ urlpatterns = [
     path("post_phone/",VerifySMS.as_view()),
     path('crud_teacher/',Crud_Teacher.as_view()),
     path('teacher_api/',Teacher_Api.as_view()),
+    path('student_api/',Student_Api.as_view()),
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 

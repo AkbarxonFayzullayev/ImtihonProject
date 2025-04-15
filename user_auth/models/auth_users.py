@@ -39,7 +39,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         regex=r'^\+998\d{9}$',
         message="Telefon raqam '+998XXXXXXXXX' formatida bo'lishi kerak!"
     )
-    username = models.CharField(max_length=25)
     email = models.EmailField(unique=True, null=True, blank=True)
     phone_number = models.CharField(validators=[phone_regex], max_length=13, unique=True)
     is_admin = models.BooleanField(default=False)

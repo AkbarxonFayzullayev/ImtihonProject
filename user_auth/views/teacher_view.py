@@ -1,8 +1,9 @@
+from django.contrib.auth.hashers import make_password
 from django.db import transaction
 from rest_framework import status
 from rest_framework.views import APIView
 from ..models.model_teacher import *
-from ..serializers import TeacherSerializer, TeacherCreateSerializer, TeacherPostSerializer
+from ..serializers import TeacherSerializer, TeacherCreateSerializer, TeacherPostSerializer, UserSerializer
 from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -105,7 +106,32 @@ class Teacher_Api(APIView):
     def post(self,request):
         serializer = TeacherPostSerializer(data=request.data)
         if serializer.is_valid():
-            teacher = serializer.save()
-            response_serializer = TeacherSerializer(teacher)
-            return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+            serializer.save()
+            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    #
+    # def post(self,request):
+    #     data = {"success":True}
+    #     user = request.data["user"]
+    #     teacher = request.data["teacher"]
+    #     phone_number = user["phone_number"]
+    #     user_serializer = UserSerializer(data=user)
+    #     user["is_teacher"] = True
+    #
+    #     if user_serializer.is_valid():
+    #         user_serializer.is_active = True
+    #         user_serializer.password = (
+    #             make_password(user_serializer.validated_data.get("password"))
+    #         )
+    #         user = user_serializer.save()
+    #
+    #         user_id = User.objects.filter(phone_number=phone_number).values("id")[0]['id']
+    #         teacher["user"]=user_id
+    #         teacher_serializer = TeacherSerializer(data=teacher)
+    #         if teacher_serializer.is_valid():
+    #             teacher_serializer.save()
+    #             data["user"] = user_serializer.data
+    #             data["teacher"] = teacher_serializer.data
+    #             return Response(data=data)
+    #         return Response(data=teacher_serializer.errors)
+    #     return Response(data=user_serializer.errors)
