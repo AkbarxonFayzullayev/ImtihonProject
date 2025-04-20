@@ -4,7 +4,7 @@ from ..make_token import *
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.contrib.auth.hashers import make_password
-from rest_framework import status,permissions
+from rest_framework import status, permissions
 from ..serializers import *
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.views import APIView
@@ -13,6 +13,13 @@ from django.core.cache import cache
 from ..models import User
 from ..serializers import SMSSerializer
 from drf_yasg.utils import swagger_auto_schema
+
+
+def send_otp():
+    otp = str(random.randint(1001, 9999))
+    print(otp, "==============================")
+    return otp
+
 
 class PhoneSendOTP(APIView):
     @swagger_auto_schema(request_body=SMSSerializer)
@@ -45,17 +52,6 @@ class PhoneSendOTP(APIView):
             }, status=status.HTTP_400_BAD_REQUEST)
 
 
-
-def send_otp():
-    otp=str(random.randint(1001,9999))
-    print(otp,"==========================")
-    return otp
-
-
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from django.core.cache import cache
-
 class VerifySMS(APIView):
     @swagger_auto_schema(request_body=VerifySMSSerializer)
     def post(self, request):
@@ -82,41 +78,44 @@ class VerifySMS(APIView):
 
 class RegisterUserApi(APIView):
     @swagger_auto_schema(request_body=UserSerializer)
-    def post(self,request):
-        serializer=UserSerializer(data=request.data)
+    def post(self, request):
+        serializer = UserSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            password=serializer.validated_data.get('password')
-            serializer.validated_data['password']=make_password(password)
+            password = serializer.validated_data.get('password')
+            serializer.validated_data['password'] = make_password(password)
             serializer.save()
             return Response({
-                "status":True,
-                'datail':'account create'
+                "status": True,
+                'datail': 'account create'
             })
 
     @swagger_auto_schema(responses={200: UserSerializer(many=True)})
-    def get(self,request):
-        users=User.objects.all().order_by("-id")
-        serializer=UserSerializer(users,many=True)
+    def get(self, request):
+        users = User.objects.all().order_by("-id")
+        serializer = UserSerializer(users, many=True)
         return Response(data=serializer.data)
 
 
 class ChangePasswordView(APIView):
     permission_classes = (IsAuthenticated,)
-    def patch(self,request):
-        serializer=ChangePasswordSerializer(instance=self.request.user,data=request.data)
+
+    def patch(self, request):
+        serializer = ChangePasswordSerializer(instance=self.request.user, data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-            return Response(serializer.data,status=status.HTTP_200_OK)
-        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class LoginApi(APIView):
-    permission_classes = [AllowAny,]
-    def post(self,request):
-        serializer=LoginSerializer(data=request.data)
+    permission_classes = [AllowAny, ]
+
+    def post(self, request):
+        serializer = LoginSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        user=serializer.validated_data.get("user")
-        token=get_tokens_for_user(user)
-        token["salom"]="hi"
-        token["is_admin"]=user.is_superuser
-        return Response(data=token,status=status.HTTP_200_OK)
+        user = serializer.validated_data.get("user")
+        token = get_tokens_for_user(user)
+        token["salom"] = "hi"
+        token["is_admin"] = user.is_superuser
+        return Response(data=token, status=status.HTTP_200_OK)
