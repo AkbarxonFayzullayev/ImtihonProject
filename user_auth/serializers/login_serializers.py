@@ -10,10 +10,10 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField()
 
     def validate(self, attrs):
-        username = attrs.get("username")
+        phone_number = attrs.get("phone_number")
         password = attrs.get("password")
         try:
-            user = User.objects.get(username=username)
+            user = User.objects.get(phone_number=phone_number)
         except User.DoesNotExist:
             raise serializers.ValidationError(
                 {
@@ -21,12 +21,12 @@ class LoginSerializer(serializers.Serializer):
                     "detail": "user doest not exist"
                 }
             )
-        auth_user = authenticate(username=user.username, password=password)
+        auth_user = authenticate(phone_number=user.phone_number, password=password)
         if auth_user is None:
             raise serializers.ValidationError(
                 {
                     "success": False,
-                    "detail": "username or password is invalid"
+                    "detail": "phone_number or password is invalid"
                 }
 
             )
@@ -51,7 +51,6 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
     re_new_password = serializers.CharField(required=True, write_only=True)
 
     def update(self, instance, validated_data):
-
         instance.password = validated_data.get('password', instance.password)
 
         if not validated_data['new_password']:

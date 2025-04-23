@@ -5,34 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="db1ca78f-0e51-4d41-83c0-5f7a526791d8" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/user_auth/models/model_attendance.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user_auth/models/model_homework.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user_auth/models/model_payments.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user_auth/models/model_worker.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user_auth/serializers/attendance_serializer.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user_auth/serializers/group_serializer.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user_auth/serializers/homework_serializer.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user_auth/serializers/payments_serializer.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user_auth/serializers/table_serializer.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user_auth/views/attendance_view.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user_auth/views/homework_view.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user_auth/views/payments_view.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user_auth/views/worker_views.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user_auth/models/model_statistics.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user_auth/serializers/statistics_serializer.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user_auth/views/statistics_view.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user_auth/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user_auth/models/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/models/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user_auth/models/model_group.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/models/model_group.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user_auth/models/model_student.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/models/model_student.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user_auth/models/model_table.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/models/model_table.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user_auth/models/model_teacher.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/models/model_teacher.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/models/model_attendance.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/models/model_attendance.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/serializers/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/serializers/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/serializers/attendance_serializer.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/serializers/attendance_serializer.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/user_auth/serializers/login_serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/serializers/login_serializers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user_auth/serializers/student_serilalizer.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/serializers/student_serilalizer.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/user_auth/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user_auth/views/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/views/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/views/attendance_view.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/views/attendance_view.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/user_auth/views/login_view.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/views/login_view.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user_auth/views/student_view.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/views/student_view.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user_auth/views/teacher_view.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/views/teacher_view.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -72,11 +56,41 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
+    &quot;Python.takrorlash.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;
   }
 }</component>
+  <component name="RunManager">
+    <configuration name="takrorlash" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="ImtihonProject" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/user_auth/views" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/user_auth/views/takrorlash.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.takrorlash" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
