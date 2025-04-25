@@ -29,12 +29,12 @@
     &quot;assignee&quot;: &quot;AkbarxonFayzullayev&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/AkbarxonFayzullayev/ImtihonProject.git",
-    "accountId": "0dbb9c00-7e27-4932-9820-731819e00e60"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/AkbarxonFayzullayev/ImtihonProject.git&quot;,
+    &quot;accountId&quot;: &quot;0dbb9c00-7e27-4932-9820-731819e00e60&quot;
   }
-}]]></component>
+}</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 3
 }</component>
