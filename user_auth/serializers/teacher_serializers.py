@@ -1,9 +1,6 @@
 from rest_framework import serializers
 #
 from user_auth.models import Teacher, User, Departments, Course
-# from ..serializers import *
-from user_auth.serializers.login_serializers import UserSerializer
-
 
 
 class TeacherSerializer(serializers.ModelSerializer):
@@ -22,12 +19,8 @@ class TeacherUserSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id','phone_number','password','email','is_active','is_teacher','is_staff','is_admin','is_student')
 
-    # def validate_is_teacher(self, value):
-    #     return True
-
-
-
-class TeacherPostSerializer(serializers.Serializer):
+class TeacherPostSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(read_only=True)
     user = TeacherUserSerializer()
     departments = serializers.PrimaryKeyRelatedField(queryset=Departments.objects.all(),many=True)
     course = serializers.PrimaryKeyRelatedField(queryset=Course.objects.all(),many=True)
@@ -46,3 +39,30 @@ class TeacherPostSerializer(serializers.Serializer):
         teacher.departments.set(departments_db)
         teacher.course.set(course_db)
         return teacher
+
+    def update(self, instance, validated_data):
+        user_data = validated_data.pop("user", None)
+        departments = validated_data.pop("departments", None)
+        course = validated_data.pop("course", None)
+
+        # USER UPDATE
+        user = instance.user
+        if user_data:
+            user.phone_number = user_data.get("phone_number", user.phone_number)
+            user.email = user_data.get("email", user.email)
+
+            password = user_data.get("password")
+            if password:
+                user.set_password(password)
+
+            user.save()
+
+        # TEACHER UPDATE
+        instance.descriptions = validated_data.get("descriptions", instance.descriptions)
+        if departments is not None:
+            instance.departments.set(departments)
+        if course is not None:
+            instance.course.set(course)
+
+        instance.save()
+        return instance

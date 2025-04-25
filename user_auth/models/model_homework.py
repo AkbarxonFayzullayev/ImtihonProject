@@ -1,6 +1,6 @@
 from django.db import models
 
-class Topics(models.Model):
+class Lesson(models.Model):
     title = models.CharField(max_length=100)
     course = models.ForeignKey('user_auth.Course',on_delete=models.RESTRICT)
     is_active = models.BooleanField(default=True)
@@ -9,15 +9,14 @@ class Topics(models.Model):
     def __str__(self):
         return self.title
 
-
 class GroupHomeWork(models.Model):
     group = models.ForeignKey('user_auth.Group', on_delete=models.RESTRICT)
-    topic = models.ForeignKey('user_auth.Topics', on_delete=models.RESTRICT)
+    lesson = models.ForeignKey('user_auth.Lesson', on_delete=models.RESTRICT)
     is_active = models.BooleanField(default=True)
     descriptions = models.CharField(max_length=400, blank=True, null=True)
 
     def __str__(self):
-        return self.topic.title
+        return self.lesson.title
 
 class HomeWork(models.Model):
     groupHomeWork = models.ForeignKey('user_auth.GroupHomeWork', on_delete=models.RESTRICT)

@@ -6,7 +6,7 @@ class Attendance(models.Model):
     descriptions = models.TextField(blank=True)
 
     def __str__(self):
-        return f"{self.group.name} - {self.date}"
+        return f"{self.group.title} - {self.date}"
 
 class StudentAttendance(models.Model):
     STATUS_CHOICES = [

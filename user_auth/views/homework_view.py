@@ -1,9 +1,9 @@
 from rest_framework.viewsets import ModelViewSet
 
 from user_auth.models import GroupHomeWork, HomeWork, Parents, Departments, Course, Rooms, TableType, Table, Group, \
-    Attendance, Topics
+    Attendance, Lesson
 from user_auth.serializers import GroupHomeWorkSerializer, HomeWorkSerializer, ParentsSerializer, DepartmentsSerializer, \
-    CourseSerializer, RoomSerializer, TableTypeSerializer, TableSerializer, GroupSerializer, TopicsSerializer, \
+    CourseSerializer, RoomSerializer, TableTypeSerializer, TableSerializer, GroupSerializer, LessonSerializer, \
     AttendanceSerializer
 from user_auth.serializers.attendance_serializer import *
 
@@ -49,5 +49,5 @@ class AttendanceViewSet(ModelViewSet):
     serializer_class = AttendanceSerializer
 
 class TopicsViewSet(ModelViewSet):
-    queryset = Topics.objects.all()
-    serializer_class = TopicsSerializer
+    queryset = Lesson.objects.all()
+    serializer_class = LessonSerializer

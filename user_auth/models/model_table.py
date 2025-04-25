@@ -11,12 +11,13 @@ class Rooms(BaseModel):
         return self.title
 
 
-class TableType(BaseModel):
+class TableType(models.Model):
     title = models.CharField(max_length=50)
     descriptions = models.CharField(max_length=400, null=True, blank=True)
 
     def __str__(self):
         return self.title
+
 
 
 class Table(BaseModel):

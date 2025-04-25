@@ -1,12 +1,12 @@
 import random
-import permission
+from django.contrib.auth import logout
+from rest_framework.authtoken.models import Token
+
 from ..make_token import *
-from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.contrib.auth.hashers import make_password
-from rest_framework import status, permissions
+from rest_framework import status
 from ..serializers import *
-from drf_yasg.utils import swagger_auto_schema
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.core.cache import cache
@@ -15,9 +15,68 @@ from ..serializers import SMSSerializer
 from drf_yasg.utils import swagger_auto_schema
 
 
+class LoginApi(APIView):
+    permission_classes = [AllowAny, ]
+
+    @swagger_auto_schema(request_body=LoginSerializer)
+    def post(self, request):
+        serializer = LoginSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            user = serializer.validated_data.get("user")
+            token = get_tokens_for_user(user)
+            token["salom"] = "hi"
+            token["is_admin"] = user.is_superuser
+        return Response(data=token, status=status.HTTP_200_OK)
+
+
+class RegisterUserApi(APIView):
+    @swagger_auto_schema(responses={200: UserSerializer(many=True)})
+    def get(self, request):
+        users = User.objects.all().order_by("-id")
+        serializer = UserSerializer(users, many=True)
+        return Response(data=serializer.data)
+
+    @swagger_auto_schema(request_body=UserSerializer)
+    def post(self, request):
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            password = serializer.validated_data.get('password')
+            serializer.validated_data['password'] = make_password(password)
+            serializer.save()
+            return Response({
+                "status": True,
+                'datail': 'account create'
+            })
+
+class SetPasswordView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(request_body=SetPasswordSerializer)
+    def post(self, request):
+        serializer = SetPasswordSerializer(data=request.data)
+        if serializer.is_valid():
+            new_password = serializer.validated_data['new_password']
+            user = request.user
+            user.set_password(new_password)
+            user.save()
+            return Response({"detail": "Parol muvaffaqiyatli yangilandi"}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class ChangePasswordView(APIView):
+    permission_classes = [IsAuthenticated, ]
+
+    @swagger_auto_schema(request_body=ChangePasswordSerializer)
+    def patch(self, request):
+        serializer = ChangePasswordSerializer(instance=self.request.user, data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response({"data": serializer.data,
+                             "message": "Changed your password successfully"}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 def send_otp():
     otp = str(random.randint(1001, 9999))
-    print(otp, "==============================")
+    print(otp)
     return otp
 
 
@@ -76,44 +135,20 @@ class VerifySMS(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class RegisterUserApi(APIView):
-    @swagger_auto_schema(request_body=UserSerializer)
+class LogoutView(APIView):
     def post(self, request):
-        serializer = UserSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            password = serializer.validated_data.get('password')
-            serializer.validated_data['password'] = make_password(password)
-            serializer.save()
-            return Response({
-                "status": True,
-                'datail': 'account create'
-            })
+        # Tokenni o'chirish
+        Token.objects.filter(user=request.user).delete()
+        logout(request)
+        return Response({"detail": "Successfully logged out."}, status=status.HTTP_200_OK)
 
-    @swagger_auto_schema(responses={200: UserSerializer(many=True)})
+
+class AuthMeView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(responses={200: UserSerializer()})
     def get(self, request):
-        users = User.objects.all().order_by("-id")
-        serializer = UserSerializer(users, many=True)
-        return Response(data=serializer.data)
+        user = request.user
+        serializer = UserSerializer(user)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
 
-
-class ChangePasswordView(APIView):
-    permission_classes = [IsAuthenticated,]
-
-    def patch(self, request):
-        serializer = ChangePasswordSerializer(instance=self.request.user, data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class LoginApi(APIView):
-    permission_classes = [AllowAny, ]
-    def post(self, request):
-        serializer = LoginSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            user = serializer.validated_data.get("user")
-            token = get_tokens_for_user(user)
-            token["salom"] = "hi"
-            token["is_admin"] = user.is_superuser
-        return Response(data=token, status=status.HTTP_200_OK)

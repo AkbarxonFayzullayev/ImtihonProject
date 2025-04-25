@@ -31,3 +31,7 @@ class TeacherStatisticSerializer(serializers.Serializer):
     teacher_name = serializers.CharField()
     total_groups = serializers.IntegerField()
     total_students = serializers.IntegerField()
+
+class DateRangeSerializer(serializers.Serializer):
+    start_date = serializers.DateField()
+    end_date = serializers.DateField()

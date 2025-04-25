@@ -1,12 +1,12 @@
 from django.contrib.auth import authenticate
-from django.db import transaction
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
-from user_auth.models import *
-from ..models import Departments, Rooms, TableType, Topics
+
+from ..models import *
 
 
 class LoginSerializer(serializers.Serializer):
-    username = serializers.CharField()
+    phone_number = serializers.CharField()
     password = serializers.CharField()
 
     def validate(self, attrs):
@@ -15,35 +15,36 @@ class LoginSerializer(serializers.Serializer):
         try:
             user = User.objects.get(phone_number=phone_number)
         except User.DoesNotExist:
-            raise serializers.ValidationError(
-                {
-                    "success": False,
-                    "detail": "user doest not exist"
-                }
-            )
+            raise serializers.ValidationError({"success": False,"detail": "User topilmadi" })
+
         auth_user = authenticate(phone_number=user.phone_number, password=password)
         if auth_user is None:
-            raise serializers.ValidationError(
-                {
-                    "success": False,
-                    "detail": "phone_number or password is invalid"
-                }
-
-            )
+            raise serializers.ValidationError({"success": False,"detail": "phone_number yoki password xato"})
         attrs["user"] = auth_user
         return attrs
-
-
-from rest_framework import serializers
-from ..models import *
-
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = (
-            'id', 'phone_number', 'password', 'is_active', 'is_staff', "is_teacher", 'is_admin', 'is_student')
+        fields = ('id', 'phone_number', 'password', 'is_active', 'is_staff', "is_teacher", 'is_admin', 'is_student')
 
+class AdminUserSerializer(serializers.ModelSerializer):
+    is_active = serializers.BooleanField(read_only=True)
+    is_staff = serializers.BooleanField(read_only=True)
+    is_teacher = serializers.BooleanField(read_only=True)
+    is_admin = serializers.BooleanField(read_only=True)
+    is_student = serializers.BooleanField(read_only=True)
+
+    class Meta:
+        model = User
+        fields = ('id', 'phone_number', 'password', 'is_active', 'is_staff', "is_teacher", 'is_admin', 'is_student')
+
+    def create(self, validated_data):
+        validated_data['is_active'] = True
+        validated_data['is_staff'] = True
+        validated_data['is_admin'] = True
+        user = User.objects.create_user(**validated_data)
+        return user
 
 class ChangePasswordSerializer(serializers.ModelSerializer):
     old_password = serializers.CharField(required=True, write_only=True)
@@ -75,6 +76,14 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
         model = User
         fields = ['old_password', 'new_password', 're_new_password']
 
+class SetPasswordSerializer(serializers.Serializer):
+    new_password = serializers.CharField(write_only=True)
+    confirm_password = serializers.CharField(write_only=True)
+
+    def validate(self, data):
+        if data['new_password'] != data['confirm_password']:
+            raise serializers.ValidationError("Parollar mos emas.")
+        return data
 
 class SMSSerializer(serializers.Serializer):
     phone_number = serializers.CharField()
@@ -133,21 +142,9 @@ class ParentsSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class HomeWorkSerializer(serializers.ModelSerializer):
+class LessonSerializer(serializers.ModelSerializer):
     class Meta:
-        model = HomeWork
-        fields = '__all__'
-
-
-class GroupHomeWorkSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = GroupHomeWork
-        fields = '__all__'
-
-
-class TopicsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Topics
+        model = Lesson
         fields = '__all__'
 
 
