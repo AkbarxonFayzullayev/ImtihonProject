@@ -1,5 +1,3 @@
-from functools import reduce
-from idlelib.pyparse import trans
 
 from django.shortcuts import get_object_or_404
 from drf_yasg.utils import swagger_auto_schema
