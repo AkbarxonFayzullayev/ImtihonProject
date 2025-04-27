@@ -75,12 +75,15 @@ urlpatterns = [
     path('statistics/teachers/', TeacherStatisticsView.as_view()),
 
     # Attendance
-    path('attendance/request_user_student/',StudentRequestAttendanceView.as_view()),
-    path('attendance/student/detail/<int:pk>',AttendanceUpdateAPIView.as_view()),
-    path('attendance/all_attendances_get/',AllAttendanceList.as_view()),
-    path('attendance/student/', AttendanceCreateAPIView.as_view()),
-    path('attendance/student_attendance/<int:id>', StudentAttendanceView.as_view()),
-    path('attendance/teacher/', TeacherAttendanceCreateAPIView.as_view()),
+    path('attendance/create',AttendanceCreateView.as_view()),
+    path('attendance/get/<int:group_id>',GroupAttendanceView.as_view()),
+    path('attendance/update/<int:pk>',AttendanceUpdateView.as_view()),
+    # path('attendance/request_user_student/',StudentRequestAttendanceView.as_view()),
+    # path('attendance/student/detail/<int:pk>',AttendanceUpdateAPIView.as_view()),
+    # path('attendance/all_attendances_get/',AllAttendanceList.as_view()),
+    # path('attendance/student/', AttendanceCreateAPIView.as_view()),
+    # path('attendance/student_attendance/<int:id>', StudentAttendanceView.as_view()),
+    # path('attendance/teacher/', TeacherAttendanceCreateAPIView.as_view()),
 
     # Mock data
     path('mock_data/',Mock_data.as_view())

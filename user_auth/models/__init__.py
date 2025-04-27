@@ -4,7 +4,7 @@ from .model_table import Table,TableType,Rooms
 from .model_homework import Lesson,GroupHomeWork,HomeWork
 from .model_student import Student,Parents
 from .model_teacher import Teacher,Departments
-from .model_attendance import Attendance,StudentAttendance
+from .model_attendance import Attendance
 from .model_worker import Worker
 
 __all__ = [
@@ -17,6 +17,6 @@ __all__ = [
     "Attendance",
     "Worker",
     "Lesson",
-    "StudentAttendance",
+    # "StudentAttendance",
     "Rooms","Departments"
 ]

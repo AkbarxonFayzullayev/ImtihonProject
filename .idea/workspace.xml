@@ -6,7 +6,29 @@
   <component name="ChangeListManager">
     <list default="true" id="db1ca78f-0e51-4d41-83c0-5f7a526791d8" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/config/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/migrations/0001_initial.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/migrations/0002_remove_user_username.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/migrations/0003_remove_parents_created_remove_parents_updated_and_more.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/migrations/0004_student_course_alter_day_descriptions_and_more.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/migrations/0005_delete_day.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/migrations/0006_alter_attendance_options_attendance_descriptions_and_more.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/migrations/0007_alter_attendance_group_alter_attendance_student_and_more.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/migrations/0008_remove_group_student.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/migrations/0009_payments.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/migrations/0010_alter_payments_amount.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/migrations/0011_alter_attendance_options_and_more.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/migrations/0012_alter_studentattendance_status_teacherattendance.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/migrations/0013_rename_topics_lesson_and_more.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/migrations/0014_month_paymenttype_payment_delete_payments.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/migrations/0015_alter_student_group_alter_student_user.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/models/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/models/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/models/model_attendance.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/models/model_attendance.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/models/model_student.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/models/model_student.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/serializers/attendance_serializer.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/serializers/attendance_serializer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/views/attendance_view.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/views/attendance_view.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
