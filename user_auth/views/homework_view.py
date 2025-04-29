@@ -1,20 +1,18 @@
 from rest_framework.viewsets import ModelViewSet
 
-from user_auth.models import GroupHomeWork, HomeWork, Parents, Departments, Course, Rooms, TableType, Table, Group, \
-    Attendance, Lesson
-from user_auth.serializers import GroupHomeWorkSerializer, HomeWorkSerializer, ParentsSerializer, DepartmentsSerializer, \
-    CourseSerializer, RoomSerializer, TableTypeSerializer, TableSerializer, GroupSerializer, LessonSerializer, \
-    AttendanceSerializer
+from user_auth.models import  Parents, Departments, Course, Rooms, TableType, Table
+from user_auth.serializers import  ParentsSerializer, DepartmentsSerializer, \
+    CourseSerializer, RoomSerializer, TableTypeSerializer, TableSerializer, GroupSerializer
 from user_auth.serializers.attendance_serializer import *
 
 
-class GroupHomeWorkViewSet(ModelViewSet):
-    queryset = GroupHomeWork.objects.all()
-    serializer_class = GroupHomeWorkSerializer
+# class GroupHomeWorkViewSet(ModelViewSet):
+#     queryset = GroupHomeWork.objects.all()
+#     serializer_class = GroupHomeWorkSerializer
 
-class HomeWorkViewSet(ModelViewSet):
-    queryset = HomeWork.objects.all()
-    serializer_class = HomeWorkSerializer
+# class HomeWorkViewSet(ModelViewSet):
+#     queryset = HomeWork.objects.all()
+#     serializer_class = HomeWorkSerializer
 
 class ParentsViewSet(ModelViewSet):
     queryset = Parents.objects.all()
@@ -44,10 +42,10 @@ class GroupViewSet(ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
 
-class AttendanceViewSet(ModelViewSet):
-    queryset = Attendance.objects.all()
-    serializer_class = AttendanceSerializer
-
-class TopicsViewSet(ModelViewSet):
-    queryset = Lesson.objects.all()
-    serializer_class = LessonSerializer
+# class AttendanceViewSet(ModelViewSet):
+#     queryset = Attendance.objects.all()
+#     serializer_class = AttendanceSerializer
+#
+# class TopicsViewSet(ModelViewSet):
+#     queryset = Lesson.objects.all()
+#     serializer_class = LessonSerializer

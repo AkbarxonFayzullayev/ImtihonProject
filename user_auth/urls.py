@@ -2,8 +2,9 @@ from .views import *
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
-from .views.homework_view import  TableViewSet, GroupViewSet, HomeWorkViewSet, GroupHomeWorkViewSet, \
-    TopicsViewSet, TableTypeViewSet, CourseViewSet, ParentsViewSet, RoomsViewSet, DepartmentsViewSet
+from .views.homework_view import  TableViewSet, GroupViewSet,  TableTypeViewSet, CourseViewSet, ParentsViewSet, RoomsViewSet, DepartmentsViewSet
+from .views.lesson_view import LessonViewSet, LessonAttendanceViewSet, HomeWorkViewSet, GroupHomeWorkViewSet, \
+    LessonCreateWithAttendance, LessonWithAttendanceGet
 from .views.mock_data import Mock_data
 from .views.statistics_view import AttendanceStatisticsView, CourseStatisticsView, GroupStatisticsView, \
     PaymentsStatisticsView, StudentStatisticsView, TeacherStatisticsView
@@ -16,15 +17,19 @@ router = DefaultRouter()
 
 router.register('table', TableViewSet)
 router.register('group', GroupViewSet)
-router.register('homework', HomeWorkViewSet)
-router.register('group_homework', GroupHomeWorkViewSet)
-router.register('topics', TopicsViewSet)
+# router.register('homework', HomeWorkViewSet)
+# router.register('group_homework', GroupHomeWorkViewSet)
+# router.register('topics', TopicsViewSet)
 router.register('worker', WorkerViewSet)
 router.register('table_type', TableTypeViewSet)
 router.register('course', CourseViewSet)
 router.register('parents', ParentsViewSet)
 router.register('rooms', RoomsViewSet)
 router.register('departments', DepartmentsViewSet)
+router.register(r'lessons', LessonViewSet)
+router.register(r'lesson-attendances', LessonAttendanceViewSet)
+router.register(r'homeworks', HomeWorkViewSet)
+router.register(r'group-homeworks', GroupHomeWorkViewSet)
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -67,17 +72,19 @@ urlpatterns = [
     path('payment/create/payment/detail/<int:pk>', PaymentDetail.as_view()),
 
     # Statistics
-    path('statistics/attendance/', AttendanceStatisticsView.as_view()),
-    path('statistics/courses/', CourseStatisticsView.as_view()),
-    path('statistics/groups/', GroupStatisticsView.as_view()),
-    path('statistics/payments/', PaymentsStatisticsView.as_view()),
+    # path('statistics/attendance/', AttendanceStatisticsView.as_view()),
+    # path('statistics/courses/', CourseStatisticsView.as_view()),
+    # path('statistics/groups/', GroupStatisticsView.as_view()),
+    # path('statistics/payments/', PaymentsStatisticsView.as_view()),
     path('statistics/students/', StudentStatisticsView.as_view()),
     path('statistics/teachers/', TeacherStatisticsView.as_view()),
 
+    path('lesson/create_attendance/',LessonCreateWithAttendance.as_view()),
+    path('lesson/get_attendance/<int:pk>',LessonWithAttendanceGet.as_view()),
     # Attendance
-    path('attendance/create',AttendanceCreateView.as_view()),
-    path('attendance/get/<int:group_id>',GroupAttendanceView.as_view()),
-    path('attendance/update/<int:pk>',AttendanceUpdateView.as_view()),
+    # path('attendance/create',AttendanceCreateView.as_view()),
+    # path('attendance/get/<int:group_id>',GroupAttendanceView.as_view()),
+    # path('attendance/update/<int:pk>',AttendanceUpdateView.as_view()),
     # path('attendance/request_user_student/',StudentRequestAttendanceView.as_view()),
     # path('attendance/student/detail/<int:pk>',AttendanceUpdateAPIView.as_view()),
     # path('attendance/all_attendances_get/',AllAttendanceList.as_view()),

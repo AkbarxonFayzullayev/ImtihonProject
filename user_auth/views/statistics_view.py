@@ -5,7 +5,7 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.response import Response
 
-from user_auth.models import Course, Group, Student, Teacher, Attendance
+from user_auth.models import Course, Group, Student, Teacher, LessonAttendance
 from rest_framework.views import APIView
 
 from user_auth.models.model_payments import Payment
@@ -17,7 +17,7 @@ from user_auth.serializers.statistics_serializer import AttendanceStatisticSeria
 class AttendanceStatisticsView(APIView):
     def get(self, request):
         today = date.today()
-        attendances = Attendance.objects.filter(date=today)
+        attendances = LessonAttendance.objects.filter(date=today)
 
         statistics = []
         for attendance in attendances:
@@ -47,7 +47,7 @@ class AttendanceStatisticsView(APIView):
         if serializer.is_valid():
             start_date = serializer.validated_data["start_date"]
             end_date = serializer.validated_data["end_date"]
-            attendances = Attendance.objects.filter(date__range=[start_date, end_date])
+            attendances = LessonAttendance.objects.filter(date__range=[start_date, end_date])
 
             statistics = []
             for attendance in attendances:

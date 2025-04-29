@@ -1,5 +1,7 @@
 from rest_framework import serializers
-from user_auth.models import Attendance,  Student, Group, Teacher
+from user_auth.models import  Student, Group, Teacher, LessonAttendance, HomeWork, Lesson, GroupHomeWork
+
+
 # from user_auth.models.model_attendance import TeacherAttendance
 
 # class StudentAttendanceSerializer(serializers.ModelSerializer):
@@ -112,85 +114,274 @@ from user_auth.models import Attendance,  Student, Group, Teacher
 #         model = Attendance
 #         fields = ['id', 'group_id', 'group_title', 'date', 'descriptions', 'attendances']
 #
+#
+# class AttendanceCreateSerializer(serializers.Serializer):
+#     group = serializers.IntegerField()
+#     date = serializers.DateField()
+#     kelgan_studentlar = serializers.ListField(child=serializers.IntegerField(), required=False)
+#     # kelmagan_studentlar = serializers.ListField(child=serializers.IntegerField(), required=False)
+#     sababli_studentlar = serializers.ListField(child=serializers.IntegerField(), required=False)
+#
+#     def validate_group_id(self, value):
+#         if not Group.objects.filter(id=value).exists():
+#             raise serializers.ValidationError("Bunday group mavjud emas.")
+#         return value
+#
+#     def validate(self, attrs):
+#         # Student ID larni tekshirish
+#         all_ids = (attrs.get('kelgan_studentlar', []) +
+#                    attrs.get('kelmagan_studentlar', []) +
+#                    attrs.get('sababli_studentlar', []))
+#         if not all_ids:
+#             raise serializers.ValidationError("Hech qanday student yuborilmadi.")
+#
+#         students = Student.objects.filter(id__in=all_ids, group=attrs['group'])
+#         if students.count() != len(set(all_ids)):
+#             raise serializers.ValidationError("Student IDlar noto'g'ri yoki boshqa groupdan.")
+#         return attrs
+#
+#     def create(self, validated_data):
+#         group_id = validated_data['group']
+#         group = Group.objects.get(id=group_id)
+#         date = validated_data['date']
+#         kelgan = validated_data.get('kelgan_studentlar', [])
+#         sababli = validated_data.get('sababli_studentlar', [])
+#
+#         attendances = []
+#
+#         # Barcha student id larini olish
+#         all_students = group.students.all()
+#         all_students_dict = {student.id: student for student in all_students}
+#
+#         all_student_ids = set(all_students_dict.keys())
+#         hadir_student_ids = set(kelgan + sababli)
+#         kelmagan_ids = all_student_ids - hadir_student_ids
+#
+#         # Kelganlar uchun
+#         for student_id in kelgan:
+#             student = all_students_dict.get(student_id)
+#             if student:
+#                 attendances.append(Attendance(
+#                     group=group,
+#                     student=student,
+#                     date=date,
+#                     status='keldi'
+#                 ))
+#
+#         # Sababli uchun
+#         for student_id in sababli:
+#             student = all_students_dict.get(student_id)
+#             if student:
+#                 attendances.append(Attendance(
+#                     group=group,
+#                     student=student,
+#                     date=date,
+#                     status='sababli'
+#                 ))
+#
+#         # Kelmaganlar uchun
+#         for student_id in kelmagan_ids:
+#             student = all_students_dict.get(student_id)
+#             if student:
+#                 attendances.append(Attendance(
+#                     group=group,
+#                     student=student,
+#                     date=date,
+#                     status='kelmadi'
+#                 ))
+#
+#         # Bulk create
+#         Attendance.objects.bulk_create(attendances)
+#
+#         return attendances
 
-class AttendanceCreateSerializer(serializers.Serializer):
+class LessonAttendanceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LessonAttendance
+        fields = ['id', 'lesson', 'student', 'status']
+
+class HomeWorkSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HomeWork
+        fields = ['id', 'groupHomeWork', 'score', 'student', 'link', 'is_active', 'descriptions']
+
+class GroupHomeWorkSerializer(serializers.ModelSerializer):
+    lesson = serializers.PrimaryKeyRelatedField(queryset=Lesson.objects.all())
+    class Meta:
+        model = GroupHomeWork
+        fields = ['id', 'group', 'lesson', 'file', 'is_active', 'descriptions']
+        ref_name = 'GroupHomeWorkSerializer'
+
+class LessonSerializer(serializers.ModelSerializer):
+    group = serializers.PrimaryKeyRelatedField(queryset=Group.objects.all())
+    homework = GroupHomeWorkSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Lesson
+        fields = ['id', 'title', 'group', 'date', 'start_time', 'end_time', 'descriptions', 'homework']
+        ref_name = 'HomeWorkSerializer'
+
+
+# class LessonCreateSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Lesson
+#         fields = ['id', 'title', 'group', 'date', 'start_time', 'end_time', 'descriptions']
+
+class LessonCreateSerializer(serializers.Serializer):
     group = serializers.IntegerField()
+    title = serializers.CharField()
     date = serializers.DateField()
-    kelgan_studentlar = serializers.ListField(child=serializers.IntegerField(), required=False)
-    # kelmagan_studentlar = serializers.ListField(child=serializers.IntegerField(), required=False)
-    sababli_studentlar = serializers.ListField(child=serializers.IntegerField(), required=False)
+    start_time = serializers.TimeField()
+    end_time = serializers.TimeField()
+    descriptions = serializers.CharField(required=False)
+    kelgan_studentlar = serializers.ListField(child=serializers.IntegerField(), required=True)
+    sababli_studentlar = serializers.ListField(child=serializers.IntegerField(), required=True)
 
-    def validate_group_id(self, value):
+    def validate_group(self, value):
         if not Group.objects.filter(id=value).exists():
             raise serializers.ValidationError("Bunday group mavjud emas.")
         return value
 
     def validate(self, attrs):
-        # Student ID larni tekshirish
-        all_ids = (attrs.get('kelgan_studentlar', []) +
-                   attrs.get('kelmagan_studentlar', []) +
-                   attrs.get('sababli_studentlar', []))
+        kelgan = attrs.get('kelgan_studentlar', [])
+        sababli = attrs.get('sababli_studentlar', [])
+        all_ids = kelgan + sababli
+
         if not all_ids:
             raise serializers.ValidationError("Hech qanday student yuborilmadi.")
 
-        students = Student.objects.filter(id__in=all_ids, group=attrs['group'])
+        group_id = attrs['group']
+        students = Student.objects.filter(id__in=all_ids, group=group_id)
+
         if students.count() != len(set(all_ids)):
-            raise serializers.ValidationError("Student IDlar noto'g'ri yoki boshqa groupdan.")
+            raise serializers.ValidationError("Student IDlar noto'g'ri yoki boshqa guruhdan.")
         return attrs
 
     def create(self, validated_data):
-        group_id = validated_data['group']
+        group_id = validated_data.pop('group')
+        kelgan_ids = validated_data.pop('kelgan_studentlar', [])
+        sababli_ids = validated_data.pop('sababli_studentlar', [])
+
         group = Group.objects.get(id=group_id)
-        date = validated_data['date']
-        kelgan = validated_data.get('kelgan_studentlar', [])
-        sababli = validated_data.get('sababli_studentlar', [])
+        lesson = Lesson.objects.create(group=group, **validated_data)
 
-        attendances = []
-
-        # Barcha student id larini olish
         all_students = group.students.all()
-        all_students_dict = {student.id: student for student in all_students}
-
-        all_student_ids = set(all_students_dict.keys())
-        hadir_student_ids = set(kelgan + sababli)
+        hadir_student_ids = set(kelgan_ids + sababli_ids)
+        all_student_ids = set(all_students.values_list('id', flat=True))
         kelmagan_ids = all_student_ids - hadir_student_ids
 
-        # Kelganlar uchun
-        for student_id in kelgan:
-            student = all_students_dict.get(student_id)
-            if student:
-                attendances.append(Attendance(
-                    group=group,
-                    student=student,
-                    date=date,
-                    status='keldi'
-                ))
+        # LessonAttendance larni tayyorlash
+        lesson_attendances = []
 
-        # Sababli uchun
-        for student_id in sababli:
-            student = all_students_dict.get(student_id)
-            if student:
-                attendances.append(Attendance(
-                    group=group,
-                    student=student,
-                    date=date,
-                    status='sababli'
-                ))
+        # Kelganlar
+        for student_id in kelgan_ids:
+            lesson_attendances.append(LessonAttendance(
+                lesson=lesson,
+                student_id=student_id,
+                status='keldi'
+            ))
 
-        # Kelmaganlar uchun
+        # Sabablilar
+        for student_id in sababli_ids:
+            lesson_attendances.append(LessonAttendance(
+                lesson=lesson,
+                student_id=student_id,
+                status='sababli'
+            ))
+
+        # Kelmaganlar
         for student_id in kelmagan_ids:
-            student = all_students_dict.get(student_id)
-            if student:
-                attendances.append(Attendance(
-                    group=group,
-                    student=student,
-                    date=date,
-                    status='kelmadi'
-                ))
+            lesson_attendances.append(LessonAttendance(
+                lesson=lesson,
+                student_id=student_id,
+                status='kelmadi'
+            ))
 
-        # Bulk create
-        Attendance.objects.bulk_create(attendances)
+        LessonAttendance.objects.bulk_create(lesson_attendances)
 
-        return attendances
+        return lesson
 
-
+#
+# class LessonAttendanceCreateSerializer(serializers.Serializer):
+#     group = serializers.IntegerField()
+#     date = serializers.DateField()
+#     kelgan_studentlar = serializers.ListField(child=serializers.IntegerField(), required=True)
+#     sababli_studentlar = serializers.ListField(child=serializers.IntegerField(), required=True)
+#
+#     def validate(self, attrs):
+#         group_id = attrs.get('group')
+#         kelgan = attrs.get('kelgan_studentlar', [])
+#         sababli = attrs.get('sababli_studentlar', [])
+#
+#         # Guruhni tekshirish
+#         group = Group.objects.filter(id=group_id).first()
+#         if not group:
+#             raise serializers.ValidationError("Bunday guruh mavjud emas.")
+#
+#         # Studentlarni tekshirish
+#         all_students = Student.objects.filter(id__in=kelgan + sababli, group=group_id)
+#         if all_students.count() != len(set(kelgan + sababli)):
+#             raise serializers.ValidationError("Student IDlar noto'g'ri yoki boshqa guruhdan.")
+#
+#         # Kelmaganlarni hisoblash
+#         all_student_ids = set(Student.objects.filter(group=group_id).values_list('id', flat=True))
+#         hadir_student_ids = set(kelgan + sababli)
+#         kelmagan_ids = all_student_ids - hadir_student_ids
+#
+#         return {
+#             'group': group_id,
+#             'date': attrs['date'],
+#             'kelgan_studentlar': kelgan,
+#             'sababli_studentlar': sababli,
+#             'kelmagan_studentlar': list(kelmagan_ids),
+#         }
+#
+#     def create(self, validated_data):
+#         group_id = validated_data['group']
+#         group = Group.objects.get(id=group_id)
+#         date = validated_data['date']
+#         kelgan = validated_data.get('kelgan_studentlar', [])
+#         sababli = validated_data.get('sababli_studentlar', [])
+#         kelmagan = validated_data.get('kelmagan_studentlar', [])
+#
+#         # Lesson yaratish
+#         lesson = Lesson.objects.create(group=group, date=date)
+#
+#         # LessonAttendance yaratish
+#         attendances = []
+#         all_students = Student.objects.filter(id__in=kelgan + sababli + kelmagan, group=group)
+#
+#         # Kelganlar uchun
+#         for student_id in kelgan:
+#             student = all_students.get(id=student_id)
+#             attendances.append(LessonAttendance(
+#                 lesson=lesson,
+#                 student=student,
+#                 date=date,
+#                 status='keldi'
+#             ))
+#
+#         # Sababli studentlar uchun
+#         for student_id in sababli:
+#             student = all_students.get(id=student_id)
+#             attendances.append(LessonAttendance(
+#                 lesson=lesson,
+#                 student=student,
+#                 date=date,
+#                 status='sababli'
+#             ))
+#
+#         # Kelmaganlar uchun
+#         for student_id in kelmagan:
+#             student = all_students.get(id=student_id)
+#             attendances.append(LessonAttendance(
+#                 lesson=lesson,
+#                 student=student,
+#                 date=date,
+#                 status='kelmadi'
+#             ))
+#
+#         # Bulk create qilish
+#         LessonAttendance.objects.bulk_create(attendances)
+#
+#         return attendances

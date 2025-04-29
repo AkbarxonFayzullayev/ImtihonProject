@@ -141,17 +141,17 @@ class ParentsSerializer(serializers.ModelSerializer):
         model = Parents
         fields = '__all__'
 
+#
+# class LessonSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Lesson
+#         fields = '__all__'
 
-class LessonSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Lesson
-        fields = '__all__'
-
-
-class AttendanceSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Attendance
-        fields = '__all__'
+#
+# class AttendanceSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Attendance
+#         fields = '__all__'
 
 
 class WorkerSerializer(serializers.ModelSerializer):
