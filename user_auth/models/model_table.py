@@ -19,7 +19,6 @@ class TableType(models.Model):
         return self.title
 
 
-
 class Table(BaseModel):
     start_time = models.TimeField()
     end_time = models.TimeField()

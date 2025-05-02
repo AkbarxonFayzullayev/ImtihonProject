@@ -19,3 +19,12 @@ class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
         fields = '__all__'
+
+    def validate(self, attrs):
+        student = attrs.get('student')
+        group = attrs.get('group')
+
+        if group not in student.group.all():
+            raise serializers.ValidationError("Bu student ushbu guruhga biriktirilmagan.")
+
+        return attrs

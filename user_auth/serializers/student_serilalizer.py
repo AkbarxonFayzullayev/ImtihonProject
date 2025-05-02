@@ -1,6 +1,6 @@
 from rest_framework import serializers
-#
-from user_auth.models import Student, User, Group
+
+from user_auth.models import Student, User, Group, Parents
 
 
 class StudentSerializer(serializers.ModelSerializer):
@@ -22,7 +22,7 @@ class StudentUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = (
-        'id', 'phone_number', 'password', 'email', 'is_active', 'is_teacher', 'is_staff', 'is_admin', 'is_student')
+            'id', 'phone_number', 'password', 'email', 'is_active', 'is_teacher', 'is_staff', 'is_admin', 'is_student')
 
     def validate_is_student(self, value):
         return True
@@ -30,7 +30,7 @@ class StudentUserSerializer(serializers.ModelSerializer):
 
 class StudentPostSerializer(serializers.Serializer):
     user = StudentUserSerializer()
-    group = serializers.PrimaryKeyRelatedField(queryset=Group.objects.all(),many=True)
+    group = serializers.PrimaryKeyRelatedField(queryset=Group.objects.all(), many=True)
 
     class Meta:
         model = Student
@@ -46,3 +46,9 @@ class StudentPostSerializer(serializers.Serializer):
         student = Student.objects.create(user=user, **validated_data)
         student.group.set(group_db)
         return student
+
+
+class ParentsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Parents
+        fields = '__all__'

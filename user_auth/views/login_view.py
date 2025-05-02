@@ -1,9 +1,8 @@
 import random
-from django.contrib.auth import logout
-from rest_framework.authtoken.models import Token
 
+from ..add_permissions import IsStaffUser
 from ..make_token import *
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from django.contrib.auth.hashers import make_password
 from rest_framework import status
 from ..serializers import *
@@ -24,12 +23,13 @@ class LoginApi(APIView):
         if serializer.is_valid(raise_exception=True):
             user = serializer.validated_data.get("user")
             token = get_tokens_for_user(user)
-            token["salom"] = "hi"
             token["is_admin"] = user.is_superuser
         return Response(data=token, status=status.HTTP_200_OK)
 
 
 class RegisterUserApi(APIView):
+    permission_classes = [IsAdminUser, IsStaffUser]
+
     @swagger_auto_schema(responses={200: UserSerializer(many=True)})
     def get(self, request):
         users = User.objects.all().order_by("-id")
@@ -48,6 +48,7 @@ class RegisterUserApi(APIView):
                 'datail': 'account create'
             })
 
+
 class SetPasswordView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -61,6 +62,8 @@ class SetPasswordView(APIView):
             user.save()
             return Response({"detail": "Parol muvaffaqiyatli yangilandi"}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 class ChangePasswordView(APIView):
     permission_classes = [IsAuthenticated, ]
 
@@ -81,6 +84,8 @@ def send_otp():
 
 
 class PhoneSendOTP(APIView):
+    permission_classes = [IsAuthenticated, ]
+
     @swagger_auto_schema(request_body=SMSSerializer)
     def post(self, request, *args, **kwargs):
         phone_number = request.data.get('phone_number')
@@ -112,6 +117,8 @@ class PhoneSendOTP(APIView):
 
 
 class VerifySMS(APIView):
+    permission_classes = [IsAuthenticated]
+
     @swagger_auto_schema(request_body=VerifySMSSerializer)
     def post(self, request):
         serializer = VerifySMSSerializer(data=request.data)
@@ -136,11 +143,20 @@ class VerifySMS(APIView):
 
 
 class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(request_body=RefreshTokenSerializer)
     def post(self, request):
-        # Tokenni o'chirish
-        Token.objects.filter(user=request.user).delete()
-        logout(request)
-        return Response({"detail": "Successfully logged out."}, status=status.HTTP_200_OK)
+        serializer = RefreshTokenSerializer(data=request.data)
+        if serializer.is_valid():
+            refresh_token = serializer.validated_data["refresh"]
+            try:
+                token = RefreshToken(refresh_token)
+                token.blacklist()
+                return Response({"detail": "Successfully logged out."}, status=status.HTTP_200_OK)
+            except Exception:
+                return Response({"error": "Invalid refresh token."}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class AuthMeView(APIView):
@@ -151,4 +167,3 @@ class AuthMeView(APIView):
         user = request.user
         serializer = UserSerializer(user)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
-

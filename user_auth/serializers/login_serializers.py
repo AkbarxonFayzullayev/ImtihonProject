@@ -1,5 +1,4 @@
 from django.contrib.auth import authenticate
-from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 
 from ..models import *
@@ -15,20 +14,22 @@ class LoginSerializer(serializers.Serializer):
         try:
             user = User.objects.get(phone_number=phone_number)
         except User.DoesNotExist:
-            raise serializers.ValidationError({"success": False,"detail": "User topilmadi" })
+            raise serializers.ValidationError({"success": False, "detail": "User topilmadi"})
 
         auth_user = authenticate(phone_number=user.phone_number, password=password)
         if auth_user is None:
-            raise serializers.ValidationError({"success": False,"detail": "phone_number yoki password xato"})
+            raise serializers.ValidationError({"success": False, "detail": "phone_number yoki password xato"})
         attrs["user"] = auth_user
         return attrs
+
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'phone_number', 'password', 'is_active', 'is_staff', "is_teacher", 'is_admin', 'is_student')
 
-class AdminUserSerializer(serializers.ModelSerializer):
+
+class StaffUserSerializer(serializers.ModelSerializer):
     is_active = serializers.BooleanField(read_only=True)
     is_staff = serializers.BooleanField(read_only=True)
     is_teacher = serializers.BooleanField(read_only=True)
@@ -42,9 +43,9 @@ class AdminUserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data['is_active'] = True
         validated_data['is_staff'] = True
-        validated_data['is_admin'] = True
         user = User.objects.create_user(**validated_data)
         return user
+
 
 class ChangePasswordSerializer(serializers.ModelSerializer):
     old_password = serializers.CharField(required=True, write_only=True)
@@ -76,6 +77,7 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
         model = User
         fields = ['old_password', 'new_password', 're_new_password']
 
+
 class SetPasswordSerializer(serializers.Serializer):
     new_password = serializers.CharField(write_only=True)
     confirm_password = serializers.CharField(write_only=True)
@@ -85,6 +87,7 @@ class SetPasswordSerializer(serializers.Serializer):
             raise serializers.ValidationError("Parollar mos emas.")
         return data
 
+
 class SMSSerializer(serializers.Serializer):
     phone_number = serializers.CharField()
 
@@ -93,68 +96,5 @@ class VerifySMSSerializer(serializers.Serializer):
     phone_number = serializers.CharField()
     verification_code = serializers.CharField()
 
-
-class CourseSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Course
-        fields = '__all__'
-
-
-class DepartmentsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Departments
-        fields = '__all__'
-
-
-class RoomSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Rooms
-        fields = '__all__'
-
-
-class GroupSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Group
-        fields = '__all__'
-
-
-class TableTypeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = TableType
-        fields = ['id', 'title', 'descriptions']
-
-
-class TableSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Table
-        fields = ['id', 'start_time', 'end_time', 'room', 'type', 'descriptions']
-
-
-class StudentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Student
-        fields = ['id', 'user', 'group', 'course', 'is_line', 'descriptions']
-
-
-class ParentsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Parents
-        fields = '__all__'
-
-#
-# class LessonSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Lesson
-#         fields = '__all__'
-
-#
-# class AttendanceSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Attendance
-#         fields = '__all__'
-
-
-class WorkerSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Worker
-        fields = '__all__'
+class RefreshTokenSerializer(serializers.Serializer):
+    refresh = serializers.CharField()

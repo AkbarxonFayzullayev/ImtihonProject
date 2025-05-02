@@ -5,19 +5,43 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="db1ca78f-0e51-4d41-83c0-5f7a526791d8" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/user_auth/models/model_lesson.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user_auth/views/lesson_view.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user_auth/add_permissions.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user_auth/views/group_view.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user_auth/views/table_view.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/user_auth/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/migrations/0001_initial.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/migrations/0002_alter_student_fullname.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/migrations/0003_remove_lesson_course_remove_lesson_is_active_and_more.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/user_auth/models/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/models/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user_auth/models/model_attendance.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/user_auth/models/model_homework.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/user_auth/serializers/attendance_serializer.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/serializers/attendance_serializer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/models/model_lesson.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/models/model_lesson.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/models/model_statistics.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/serializers/lesson_serializer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/models/model_table.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/models/model_table.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/models/model_teacher.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/models/model_teacher.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/models/model_worker.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/serializers/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/serializers/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/serializers/attendance_serializer.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/serializers/group_serializer.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/serializers/group_serializer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/serializers/homework_serializer.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/serializers/homework_serializer.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/user_auth/serializers/login_serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/serializers/login_serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/serializers/payments_serializer.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/serializers/payments_serializer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/serializers/statistics_serializer.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/serializers/statistics_serializer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/serializers/student_serilalizer.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/serializers/student_serilalizer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/serializers/table_serializer.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/serializers/table_serializer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/serializers/teacher_serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/serializers/teacher_serializers.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/user_auth/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user_auth/views/attendance_view.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/views/attendance_view.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/views/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/views/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/views/attendance_view.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/user_auth/views/homework_view.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/views/homework_view.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/views/lesson_view.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/views/lesson_view.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/views/login_view.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/views/login_view.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/views/mock_data.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/views/payments_view.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/views/payments_view.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/user_auth/views/statistics_view.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/views/statistics_view.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/views/student_view.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/views/student_view.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/views/teacher_view.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/views/teacher_view.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/views/user_crud_view.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_auth/views/user_crud_view.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_auth/views/worker_views.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,7 +66,7 @@
 }</component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/AkbarxonFayzullayev/ImtihonViewPro.git&quot;,
+    &quot;url&quot;: &quot;https://github.com/AkbarxonFayzullayev/Finally_exam_project.git&quot;,
     &quot;accountId&quot;: &quot;0dbb9c00-7e27-4932-9820-731819e00e60&quot;
   }
 }</component>
@@ -63,6 +87,11 @@
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\Rest\ImtihonProject\user_auth" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration name="takrorlash" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="ImtihonProject" />
