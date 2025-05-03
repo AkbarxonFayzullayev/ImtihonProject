@@ -50,3 +50,12 @@ class IsStaffOrAdminUser(BasePermission):
                 user.is_active and
                 (user.is_staff or user.is_superuser)
         )
+class IsStudentOrTeacherOrStaffOrAdminUser(BasePermission):
+    def has_permission(self, request, view):
+        user = request.user
+        # Foydalanuvchi faqat xodim yoki administrator bo'lsa va faol bo'lsa, ruxsat beradi
+        return (
+                user.is_authenticated and
+                user.is_active and
+                (user.is_staff or user.is_student or user.is_teacher or user.is_superuser)
+        )

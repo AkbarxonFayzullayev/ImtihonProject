@@ -89,11 +89,13 @@ class StudentGetHomeworks(APIView):
     def get(self, request):
         user = request.user
         student = Student.objects.get(user=user)  # Foydalanuvchi orqali talaba obyekti
-        homeworks = HomeWork.objects.filter(student=student)  # Talabaga tegishli uy vazifalari
+        groups = student.group.all()  # Talabaga tegishli guruhlar
+        homeworks = HomeWork.objects.filter(group_homework__group__in=groups)  # Talabaga biriktirilgan guruhlarga tegishli uy vazifalari
 
         data = []
         for homework in homeworks:
             try:
+                # Har bir uy vazifasi uchun baho va izohni olish
                 review = homework.homeworkreview
                 score = review.score  # Baholash ballari
                 comment = review.comment  # Izoh
@@ -101,17 +103,21 @@ class StudentGetHomeworks(APIView):
                 score = None
                 comment = None
 
+            # Agar uy vazifasi tekshirilmagan bo'lsa, 'is_checked' False bo'ladi
+            is_checked = homework.is_checked if homework.is_checked else False
+
             data.append({
                 "homework_title": homework.group_homework.title,
                 "descriptions": homework.descriptions,
                 "link": homework.link,
-                "is_checked": homework.is_checked,
+                "is_checked": is_checked,
                 "deadline": homework.group_homework.deadline,
                 "score": score,
                 "review_comment": comment
             })
 
         return Response(data)  # Barcha uy vazifalari ma'lumotlari qaytariladi
+
 
 
 # StudentGetAttendance, talaba uchun davomat ma'lumotlarini olish

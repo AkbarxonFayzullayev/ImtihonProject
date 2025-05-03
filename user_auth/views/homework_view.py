@@ -3,7 +3,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from user_auth.add_permissions import IsTeacherUser, IsTeacherOrStaffOrAdmin, IsStudentOrStaffOrAdmin
+from user_auth.add_permissions import IsTeacherUser, IsTeacherOrStaffOrAdmin, IsStudentOrStaffOrAdmin, \
+    IsStudentOrTeacherOrStaffOrAdminUser
 from user_auth.models import HomeworkReview, GroupHomeWork, \
     HomeWork
 from user_auth.serializers import HomeworkReviewSerializer, \
@@ -82,12 +83,12 @@ class GroupHomeWorkDetailView(APIView):
 
 # O‘quvchi uy vazifalari bilan ishlash
 class HomeWorkAPIView(APIView):
-    permission_classes = [IsStudentOrStaffOrAdmin]
+    permission_classes = [IsStudentOrTeacherOrStaffOrAdminUser]
 
     # Barcha uy vazifalarini olish
     def get(self, request):
-        homeworks = GroupHomeWork.objects.all()
-        serializer = GroupHomeWorkSerializer(homeworks, many=True)
+        homeworks = HomeWork.objects.all()
+        serializer = HomeWorkSerializer(homeworks, many=True)
         return Response(serializer.data)
 
     # Yangi uy vazifasini yaratish

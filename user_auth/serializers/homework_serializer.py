@@ -5,9 +5,11 @@ from user_auth.models import HomeWork, GroupHomeWork, HomeworkReview
 
 # HomeWorkSerializer - HomeWork modelini serializatsiya qilish
 class HomeWorkSerializer(serializers.ModelSerializer):
+    is_checked = serializers.BooleanField(read_only=True)
+    student = serializers.PrimaryKeyRelatedField(read_only=True)
     class Meta:
         model = HomeWork  # HomeWork modeli
-        fields = ['id', 'group_homework', 'student', 'link', 'descriptions']  # Tanlangan maydonlar
+        fields = ['id', 'group_homework', 'student', 'link', 'descriptions','is_checked']  # Tanlangan maydonlar
 
 
 # GroupHomeWorkSerializer - GroupHomeWork modelini serializatsiya qilish
