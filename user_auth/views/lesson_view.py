@@ -1,7 +1,6 @@
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.generics import UpdateAPIView
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -11,6 +10,7 @@ from ..serializers.lesson_serializer import LessonAttendanceSerializer, LessonCr
     LessonUpdateSerializer
 
 
+# Lesson yaratish va unga attendance larni bog'lash view
 class LessonCreateWithAttendance(APIView):
     permission_classes = [IsTeacherOrStaffOrAdmin]
 
@@ -21,17 +21,17 @@ class LessonCreateWithAttendance(APIView):
         if lesson_serializer.is_valid():
             lesson = lesson_serializer.save()
 
-            # Lesson ni qayta serialize qilamiz
+            # Lesson ni serialize qilib, kerakli maydonlarni ajratib olamiz
             lesson_info = {
                 'id': lesson.id,
                 'title': lesson.title,
                 'group': lesson.group.id,
                 'date': lesson.date,
-                'table': lesson.table.id,
+                'table': lesson.table.id,  # table mavjud bo'lmasa, xatolik berishi mumkin
                 'descriptions': lesson.descriptions,
             }
 
-            # Attendance ma'lumotlarini tayyorlash
+            # Shu lesson bilan bog'liq barcha attendance larni yig'amiz
             attendances = LessonAttendance.objects.filter(lesson=lesson)
             attendance_list = []
             for attendance in attendances:
@@ -48,6 +48,7 @@ class LessonCreateWithAttendance(APIView):
             return Response(lesson_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+# Barcha darslar ro'yxati va har bir dars uchun statistik attendance
 class AllLessonList(APIView):
     permission_classes = [IsTeacherOrStaffOrAdmin]
 
@@ -61,6 +62,7 @@ class AllLessonList(APIView):
             sababli = []
             kechikkan = []
 
+            # Har bir lesson uchun davomatlarni tahlil qilamiz
             attendances = LessonAttendance.objects.filter(lesson=lesson)
             for attendance in attendances:
                 student_id = attendance.student.id
@@ -87,6 +89,7 @@ class AllLessonList(APIView):
         return Response(result)
 
 
+# Muayyan Lesson uchun attendance statistikasi
 class LessonWithAttendanceGet(APIView):
     permission_classes = [IsTeacherOrStaffOrAdmin]
 
@@ -103,6 +106,7 @@ class LessonWithAttendanceGet(APIView):
         sababli = []
         kechikkan = []
 
+        # Har bir attendance statusi asosida toifalarga ajratamiz
         for attendance in attendances:
             student_id = attendance.student.id
 
@@ -129,12 +133,14 @@ class LessonWithAttendanceGet(APIView):
         return Response(data, status=200)
 
 
+# Lesson ni yangilash uchun view
 class UpdateLessonView(UpdateAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
     permission_classes = [IsTeacherOrStaffOrAdmin]
 
 
+# Lesson va unga bog'liq attendance larni o'chirish
 class DeleteLessonView(APIView):
     permission_classes = [IsTeacherOrStaffOrAdmin]
 
@@ -144,11 +150,12 @@ class DeleteLessonView(APIView):
         except Lesson.DoesNotExist:
             return Response({"error": "Bunday ID li Dars mavjud emas! "}, status=status.HTTP_400_BAD_REQUEST)
         attendances = LessonAttendance.objects.filter(lesson=lesson)
-        attendances.delete()
-        lesson.delete()
+        attendances.delete()  # Darsga tegishli barcha davomatlar o'chiriladi
+        lesson.delete()  # So'ngra dars o'chiriladi
         return Response({"success": "Dars va unga tegishli davomatlar o‘chirildi!"}, status=status.HTTP_204_NO_CONTENT)
 
 
+# Bitta LessonAttendance ni yangilash uchun view (PUT va PATCH)
 class AttendanceUpdateView(APIView):
     permission_classes = [IsTeacherOrStaffOrAdmin]
 
@@ -177,6 +184,7 @@ class AttendanceUpdateView(APIView):
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+# Lesson va barcha uning maydonlarini to‘liq yoki qisman yangilash uchun view
 class LessonFullUpdateView(APIView):
     permission_classes = [IsTeacherOrStaffOrAdmin]
 

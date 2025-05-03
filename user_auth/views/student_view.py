@@ -1,7 +1,6 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.exceptions import NotFound
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
@@ -14,11 +13,12 @@ from ..models.model_payments import Payment
 from ..serializers.student_serilalizer import StudentSerializer, StudentPostSerializer, ParentsSerializer
 
 
+# Student_Api, barcha talabalar ro'yxatini olish va yangi talaba qo'shish uchun API
 class Student_Api(APIView):
-    permission_classes = [IsStaffOrAdminUser]
+    permission_classes = [IsStaffOrAdminUser]  # Faqat staff yoki admin foydalanuvchilari uchun
 
     @swagger_auto_schema(
-        responses={200: StudentSerializer(many=True)}
+        responses={200: StudentSerializer(many=True)}  # Barcha talabalar uchun serializatsiya javobi
     )
     def get(self, request):
         students = Student.objects.all()  # Barcha studentlarni olish
@@ -26,74 +26,77 @@ class Student_Api(APIView):
         return Response(serializer.data)
 
     @swagger_auto_schema(
-        request_body=StudentPostSerializer
+        request_body=StudentPostSerializer  # Yangi student ma'lumotlari kiritilishi
     )
     def post(self, request):
-        serializer = StudentPostSerializer(data=request.data)
+        serializer = StudentPostSerializer(data=request.data)  # Yangi talaba qo'shish
         if serializer.is_valid():
-            serializer.save()
+            serializer.save()  # Yangi talabani saqlash
             return Response(data=serializer.data)
-        return Response(data=serializer.errors)
+        return Response(data=serializer.errors)  # Agar noto'g'ri bo'lsa, xatoliklarni qaytarish
 
 
+# StudentDetail, o'quvchining detalini ko'rish, yangilash, o'zgartirish va o'chirish
 class StudentDetail(APIView):
-    permission_classes = [IsStaffOrAdminUser]
+    permission_classes = [IsStaffOrAdminUser]  # Faqat staff yoki admin foydalanuvchilari uchun
 
-    @swagger_auto_schema(responses={200: StudentPostSerializer()})
+    @swagger_auto_schema(responses={200: StudentPostSerializer()})  # Talaba ma'lumotlarini ko'rish
     def get(self, request, pk):
-        student = get_object_or_404(Student, pk=pk)
+        student = get_object_or_404(Student, pk=pk)  # Talaba ID orqali topiladi
         serializer = StudentSerializer(student)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @swagger_auto_schema(request_body=StudentPostSerializer)
+    @swagger_auto_schema(request_body=StudentPostSerializer)  # Talaba ma'lumotlarini yangilash
     def put(self, request, pk):
-        student = get_object_or_404(Student, pk=pk)
+        student = get_object_or_404(Student, pk=pk)  # Talaba ID orqali topiladi
         serializer = StudentPostSerializer(student, data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save()  # Yangilanishlarni saqlash
             return Response(data=serializer.data)
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @swagger_auto_schema(request_body=StudentPostSerializer)
+    @swagger_auto_schema(request_body=StudentPostSerializer)  # Talaba ma'lumotlarini qisman yangilash
     def patch(self, request, pk):
-        student = get_object_or_404(Student, pk=pk)
+        student = get_object_or_404(Student, pk=pk)  # Talaba ID orqali topiladi
         serializer = StudentPostSerializer(student, data=request.data, partial=True)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save()  # Qisman yangilanishlarni saqlash
             return Response(data=serializer.data)
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @swagger_auto_schema(responses={204: 'Deleted successfully', 404: 'Not Found'})
+    @swagger_auto_schema(responses={204: 'Deleted successfully', 404: 'Not Found'})  # Talaba o'chirish
     def delete(self, request, pk):
         try:
-            student = Student.objects.get(pk=pk)
+            student = Student.objects.get(pk=pk)  # Talaba ID orqali topiladi
         except Student.DoesNotExist:
-            raise NotFound("Bunday ID ga ega Teacher topilmadi. ")
-        student.user.delete()
-        student.delete()
+            raise NotFound("Bunday ID ga ega Teacher topilmadi. ")  # Agar talaba topilmasa, xatolik
+        student.user.delete()  # Talaba bilan bog'liq foydalanuvchi o'chiriladi
+        student.delete()  # Talaba o'chiriladi
         return Response({"detail": "Teacher va unga tegishli User o'chirildi"}, status=204)
 
 
+# ParentsViewSet, ota-onalar ma'lumotlarini boshqarish uchun ViewSet
 class ParentsViewSet(ModelViewSet):
-    permission_classes = [IsStaffOrAdminUser]
-    queryset = Parents.objects.all()
-    serializer_class = ParentsSerializer
+    permission_classes = [IsStaffOrAdminUser]  # Faqat staff yoki admin foydalanuvchilari uchun
+    queryset = Parents.objects.all()  # Ota-onalar ma'lumotlari
+    serializer_class = ParentsSerializer  # Serializer sinfi
 
 
+# StudentGetHomeworks, talaba uchun uy vazifalarini olish
 class StudentGetHomeworks(APIView):
-    permission_classes = [IsStudentUser]
+    permission_classes = [IsStudentUser]  # Faqat talabalar uchun
 
     def get(self, request):
         user = request.user
-        student = Student.objects.get(user=user)
-        homeworks = HomeWork.objects.filter(student=student)
+        student = Student.objects.get(user=user)  # Foydalanuvchi orqali talaba obyekti
+        homeworks = HomeWork.objects.filter(student=student)  # Talabaga tegishli uy vazifalari
 
         data = []
         for homework in homeworks:
             try:
                 review = homework.homeworkreview
-                score = review.score
-                comment = review.comment
+                score = review.score  # Baholash ballari
+                comment = review.comment  # Izoh
             except HomeworkReview.DoesNotExist:
                 score = None
                 comment = None
@@ -108,16 +111,17 @@ class StudentGetHomeworks(APIView):
                 "review_comment": comment
             })
 
-        return Response(data)
+        return Response(data)  # Barcha uy vazifalari ma'lumotlari qaytariladi
 
 
+# StudentGetAttendance, talaba uchun davomat ma'lumotlarini olish
 class StudentGetAttendance(APIView):
-    permission_classes = [IsStudentUser]
+    permission_classes = [IsStudentUser]  # Faqat talabalar uchun
 
     def get(self, request):
         user = request.user
-        student = Student.objects.get(user=user)
-        attendances = LessonAttendance.objects.filter(student=student).select_related('lesson')
+        student = Student.objects.get(user=user)  # Foydalanuvchi orqali talaba obyekti
+        attendances = LessonAttendance.objects.filter(student=student).select_related('lesson')  # Talabaning davomati
 
         data = []
         for attendance in attendances:
@@ -128,16 +132,17 @@ class StudentGetAttendance(APIView):
                 "status": attendance.status,
             })
 
-        return Response(data)
+        return Response(data)  # Davomat ma'lumotlarini qaytarish
 
 
+# StudentGetPayments, talaba to'lovlari haqida ma'lumot olish
 class StudentGetPayments(APIView):
-    permission_classes = [IsStudentUser]
+    permission_classes = [IsStudentUser]  # Faqat talabalar uchun
 
     def get(self, request):
         user = request.user
-        student = Student.objects.get(user=user)
-        payments = Payment.objects.filter(student=student)
+        student = Student.objects.get(user=user)  # Foydalanuvchi orqali talaba obyekti
+        payments = Payment.objects.filter(student=student)  # Talabaning to'lovlari
 
         data = []
         for payment in payments:
@@ -151,4 +156,4 @@ class StudentGetPayments(APIView):
                 "price": payment.price,
             })
 
-        return Response(data)
+        return Response(data)  # To'lovlar haqida ma'lumotlar

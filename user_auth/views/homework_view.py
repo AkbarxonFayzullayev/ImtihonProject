@@ -1,6 +1,5 @@
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -14,11 +13,13 @@ from user_auth.serializers import HomeworkReviewSerializer, \
 class GroupHomeWorkAPIView(APIView):
     permission_classes = [IsTeacherOrStaffOrAdmin]
 
+    # Barcha guruh uy vazifalarini olish
     def get(self, request):
         homeworks = GroupHomeWork.objects.all()
         serializer = GroupHomeWorkSerializer(homeworks, many=True)
         return Response(serializer.data)
 
+    # Yangi guruh uy vazifasini yaratish
     @swagger_auto_schema(request_body=GroupHomeWorkSerializer)
     def post(self, request):
         serializer = GroupHomeWorkSerializer(data=request.data)
@@ -31,6 +32,7 @@ class GroupHomeWorkAPIView(APIView):
 class GroupHomeWorkDetailView(APIView):
     permission_classes = [IsTeacherOrStaffOrAdmin]
 
+    # Bitta guruh uy vazifasini ID orqali olish
     def get(self, request, pk):
         try:
             group_homework = GroupHomeWork.objects.get(pk=pk)
@@ -39,6 +41,7 @@ class GroupHomeWorkDetailView(APIView):
         serializer = GroupHomeWorkSerializer(group_homework)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
+    # To‘liq o‘zgartirish (PUT)
     @swagger_auto_schema(request_body=GroupHomeWorkSerializer)
     def put(self, request, pk):
         try:
@@ -51,6 +54,7 @@ class GroupHomeWorkDetailView(APIView):
             return Response(data=serializer.data, status=status.HTTP_200_OK)
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    # Qisman o‘zgartirish (PATCH)
     @swagger_auto_schema(request_body=GroupHomeWorkSerializer)
     def patch(self, request, pk):
         try:
@@ -65,6 +69,7 @@ class GroupHomeWorkDetailView(APIView):
 
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    # O‘chirish
     def delete(self, request, pk):
         self.permission_classes = [IsTeacherUser]
         try:
@@ -75,15 +80,17 @@ class GroupHomeWorkDetailView(APIView):
         return Response({"success": "GroupHomeWork o‘chirildi."}, status=status.HTTP_204_NO_CONTENT)
 
 
-# HomeWork
+# O‘quvchi uy vazifalari bilan ishlash
 class HomeWorkAPIView(APIView):
     permission_classes = [IsStudentOrStaffOrAdmin]
 
+    # Barcha uy vazifalarini olish
     def get(self, request):
         homeworks = GroupHomeWork.objects.all()
         serializer = GroupHomeWorkSerializer(homeworks, many=True)
         return Response(serializer.data)
 
+    # Yangi uy vazifasini yaratish
     @swagger_auto_schema(request_body=HomeWorkSerializer)
     def post(self, request):
         serializer = HomeWorkSerializer(data=request.data)
@@ -96,6 +103,7 @@ class HomeWorkAPIView(APIView):
 class HomeWorkDetailView(APIView):
     permission_classes = [IsStudentOrStaffOrAdmin]
 
+    # Uy vazifasini ID orqali olish
     def get(self, request, pk):
         try:
             homework = HomeWork.objects.get(pk=pk)
@@ -105,6 +113,7 @@ class HomeWorkDetailView(APIView):
         serializer = HomeWorkSerializer(homework)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
+    # To‘liq o‘zgartirish (PUT)
     @swagger_auto_schema(request_body=HomeWorkSerializer)
     def put(self, request, pk):
         try:
@@ -118,6 +127,7 @@ class HomeWorkDetailView(APIView):
             return Response(data=serializer.data, status=status.HTTP_200_OK)
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    # Qisman o‘zgartirish (PATCH)
     @swagger_auto_schema(request_body=HomeWorkSerializer)
     def patch(self, request, pk):
         try:
@@ -131,6 +141,7 @@ class HomeWorkDetailView(APIView):
             return Response(data=serializer.data, status=status.HTTP_200_OK)
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    # O‘chirish
     @swagger_auto_schema(request_body=HomeWorkSerializer)
     def delete(self, request, pk):
         try:
@@ -142,21 +153,22 @@ class HomeWorkDetailView(APIView):
         return Response({"success": "HomeWork o‘chirildi."}, status=status.HTTP_204_NO_CONTENT)
 
 
-# HomeworkReview
+# Uy vazifasi sharhlari bilan ishlovchi API
 class HomeworkReviewAPIView(APIView):
     permission_classes = [IsTeacherOrStaffOrAdmin]
 
+    # Barcha sharhlarni olish
     def get(self, request):
-        homework_reviews = HomeworkReview.objects.all()  # Barcha homework review-larni olish
-        serializer = HomeworkReviewSerializer(homework_reviews, many=True)  # HomeworkReview-larni serializatsiya qilish
+        homework_reviews = HomeworkReview.objects.all()
+        serializer = HomeworkReviewSerializer(homework_reviews, many=True)
         return Response(serializer.data)
 
+    # Yangi sharh yaratish va homework ni is_checked = True qilish
     @swagger_auto_schema(request_body=HomeworkReviewSerializer)
     def post(self, request):
         serializer = HomeworkReviewSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            # Homework is_checked = True update
             homework = serializer.validated_data['homework']
             homework.is_checked = True
             homework.save()
@@ -167,6 +179,7 @@ class HomeworkReviewAPIView(APIView):
 class HomeworkReviewDetailView(APIView):
     permission_classes = [IsTeacherOrStaffOrAdmin]
 
+    # Sharhni ID orqali olish
     def get(self, request, pk):
         try:
             review = HomeworkReview.objects.get(pk=pk)
@@ -176,6 +189,7 @@ class HomeworkReviewDetailView(APIView):
         serializer = HomeworkReviewSerializer(review)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
+    # To‘liq o‘zgartirish (PUT)
     @swagger_auto_schema(request_body=HomeworkReviewSerializer)
     def put(self, request, pk):
         try:
@@ -189,6 +203,7 @@ class HomeworkReviewDetailView(APIView):
             return Response(data=serializer.data, status=status.HTTP_200_OK)
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    # Qisman o‘zgartirish (PATCH)
     @swagger_auto_schema(request_body=HomeworkReviewSerializer)
     def patch(self, request, pk):
         try:
@@ -202,6 +217,7 @@ class HomeworkReviewDetailView(APIView):
             return Response(data=serializer.data, status=status.HTTP_200_OK)
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    # O‘chirish
     @swagger_auto_schema(responses={204: "Homework o'chirildi"})
     def delete(self, request, pk):
         try:

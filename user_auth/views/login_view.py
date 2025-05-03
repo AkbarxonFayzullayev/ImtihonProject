@@ -1,7 +1,5 @@
 import random
 
-from rest_framework.pagination import PageNumberPagination
-
 from ..add_permissions import IsStaffOrAdminUser
 from ..make_token import *
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -16,6 +14,7 @@ from ..serializers import SMSSerializer
 from drf_yasg.utils import swagger_auto_schema
 
 
+# Login API — foydalanuvchiga JWT token qaytaradi
 class LoginApi(APIView):
     permission_classes = [AllowAny, ]
 
@@ -29,15 +28,18 @@ class LoginApi(APIView):
         return Response(data=token, status=status.HTTP_200_OK)
 
 
+# Foydalanuvchilarni ro'yxatdan o'tkazish va ko'rish
 class RegisterUserApi(APIView):
     permission_classes = [IsStaffOrAdminUser]
 
+    # Barcha foydalanuvchilarni ko‘rish
     @swagger_auto_schema(responses={200: UserSerializer(many=True)})
     def get(self, request):
         users = User.objects.all().order_by("-id")
         serializer = UserSerializer(users, many=True)
         return Response(serializer.data)
 
+    # Yangi foydalanuvchi yaratish
     @swagger_auto_schema(request_body=UserSerializer)
     def post(self, request):
         serializer = UserSerializer(data=request.data)
@@ -51,6 +53,7 @@ class RegisterUserApi(APIView):
             })
 
 
+# Authenticated foydalanuvchi parolini sozlash
 class SetPasswordView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -66,6 +69,7 @@ class SetPasswordView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+# Foydalanuvchi eski parol bilan yangilash
 class ChangePasswordView(APIView):
     permission_classes = [IsAuthenticated, ]
 
@@ -79,13 +83,14 @@ class ChangePasswordView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# OTP generatsiyasi uchun funksiya
+# 4 xonali OTP kod generatsiyasi
 def generate_otp():
     otp = str(random.randint(1000, 9999))
     print(f"Generated OTP: {otp}")
     return otp
 
 
+# Telefon raqamga OTP yuborish (SMS emas, faqat test uchun kod qaytadi)
 class PhoneSendOTP(APIView):
     # permission_classes = [IsAuthenticated, ]
 
@@ -102,7 +107,7 @@ class PhoneSendOTP(APIView):
         user = User.objects.filter(phone_number=phone).first()
         if user:
             otp = generate_otp()
-            cache.set(phone, otp, 600)  # OTP 10 daqiqa davomida amal qiladi
+            cache.set(phone, otp, 600)  # 10 daqiqa amal qiladi
             return Response({
                 "status": True,
                 "message": "Tasdiqlash kodi yuborildi",
@@ -114,6 +119,7 @@ class PhoneSendOTP(APIView):
         }, status=status.HTTP_400_BAD_REQUEST)
 
 
+# Parolni tiklash uchun (OTP va yangi parol kiritiladi)
 class ResetPassword(APIView):
     # permission_classes = [IsAuthenticated, ]
 
@@ -127,7 +133,7 @@ class ResetPassword(APIView):
             new_password = serializer.validated_data['new_password']
             renew_password = serializer.validated_data['renew_password']
 
-            # 1. OTPni keshdan tekshiramiz
+            # Keshdagi OTP ni tekshirish
             cached_otp = cache.get(phone_number)
 
             if cached_otp != verification_code:
@@ -136,20 +142,20 @@ class ResetPassword(APIView):
                     'message': 'Noto‘g‘ri tasdiqlash kodi'
                 }, status=status.HTTP_400_BAD_REQUEST)
 
-            # 2. Parolni tekshiramiz
+            # Parollar bir xilmi?
             if new_password != renew_password:
                 return Response({
                     'status': False,
                     'message': 'Parollar mos kelmaydi'
                 }, status=status.HTTP_400_BAD_REQUEST)
 
-            # 3. Parolni yangilaymiz
+            # Parolni yangilash
             user = User.objects.filter(phone_number=phone_number).first()
             if user:
                 user.set_password(new_password)
                 user.save()
 
-                # OTPni tozalash
+                # Keshdan OTP ni o‘chirish
                 cache.delete(phone_number)
 
                 return Response({
@@ -165,6 +171,7 @@ class ResetPassword(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+# Foydalanuvchi logout qiladi (refresh token black list ga qo‘shiladi)
 class LogoutView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -182,6 +189,7 @@ class LogoutView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+# Joriy foydalanuvchi ma'lumotlarini olish (profil)
 class AuthMeView(APIView):
     permission_classes = [IsAuthenticated]
 

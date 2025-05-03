@@ -4,68 +4,74 @@ from ..models import Lesson, Group, Student, LessonAttendance, Table
 from .homework_serializer import GroupHomeWorkSerializer
 
 
+# LessonSerializer, dars ma'lumotlarini serializatsiya qilish uchun ishlatiladi
 class LessonSerializer(serializers.ModelSerializer):
-    group = serializers.PrimaryKeyRelatedField(queryset=Group.objects.all())
-    homework = GroupHomeWorkSerializer(many=True, read_only=True)
+    group = serializers.PrimaryKeyRelatedField(queryset=Group.objects.all())  # Guruhni tanlash
+    homework = GroupHomeWorkSerializer(many=True, read_only=True)  # Uy vazifalari bilan bog'lanish
 
     class Meta:
-        model = Lesson
-        fields = ['id', 'title', 'group', 'date', 'table', 'descriptions', 'homework']
-        ref_name = 'HomeWorkSerializer'
+        model = Lesson  # Dars modelini ishlatadi
+        fields = ['id', 'title', 'group', 'date', 'table', 'descriptions', 'homework']  # Darsning kerakli maydonlari
+        ref_name = 'HomeWorkSerializer'  # Bu serializer nomini belgilash
 
 
+# LessonAttendanceSerializer, darsga qatnashish holatini serializatsiya qilish uchun
 class LessonAttendanceSerializer(serializers.ModelSerializer):
     class Meta:
-        model = LessonAttendance
-        fields = ['id', 'lesson', 'student', 'status']
+        model = LessonAttendance  # Davomat modelini ishlatadi
+        fields = ['id', 'lesson', 'student', 'status']  # Dars, talaba va qatnashish holati
 
 
+# LessonCreateSerializer, yangi dars yaratish uchun serializer
 class LessonCreateSerializer(serializers.Serializer):
-    group = serializers.IntegerField()
-    title = serializers.CharField()
-    date = serializers.DateField()
-    table = serializers.IntegerField()
-    descriptions = serializers.CharField(required=False)
-    kelgan_studentlar = serializers.ListField(child=serializers.IntegerField(), required=True)
-    sababli_studentlar = serializers.ListField(child=serializers.IntegerField(), required=True)
+    group = serializers.IntegerField()  # Guruh ID
+    title = serializers.CharField()  # Dars nomi
+    date = serializers.DateField()  # Dars sanasi
+    table = serializers.IntegerField()  # Jadval ID
+    descriptions = serializers.CharField(required=False)  # Dars tavsifi (ixtiyoriy)
+    kelgan_studentlar = serializers.ListField(child=serializers.IntegerField(), required=True)  # Kelgan talabalar
+    sababli_studentlar = serializers.ListField(child=serializers.IntegerField(), required=True)  # Sababli talabalar
 
+    # Guruhni tekshirish
     def validate_group(self, value):
-        if not Group.objects.filter(id=value).exists():
+        if not Group.objects.filter(id=value).exists():  # Guruh mavjudligini tekshirish
             raise serializers.ValidationError("Bunday group mavjud emas.")
-
         return value
 
+    # Umumiy validatsiya
     def validate(self, attrs):
         kelgan = attrs.get('kelgan_studentlar', [])
         sababli = attrs.get('sababli_studentlar', [])
         all_ids = kelgan + sababli
 
-        if not all_ids:
+        if not all_ids:  # Hech qanday talaba yuborilmasa, xato
             raise serializers.ValidationError("Hech qanday student yuborilmadi.")
 
         group_id = attrs['group']
-        students = Student.objects.filter(id__in=all_ids, group=group_id)
+        students = Student.objects.filter(id__in=all_ids, group=group_id)  # Talabalar guruhiga qarab filtrlash
 
-        if students.count() != len(set(all_ids)):
+        if students.count() != len(set(all_ids)):  # Agar studentlar noto'g'ri ID yoki boshqa guruhdan bo'lsa
             raise serializers.ValidationError("Student IDlar noto'g'ri yoki boshqa guruhdan.")
         return attrs
 
+    # Yangi darsni yaratish
     def create(self, validated_data):
-        table_id = validated_data.pop('table')
-        table = Table.objects.get(id=table_id)
-        group_id = validated_data.pop('group')
-        kelgan_ids = validated_data.pop('kelgan_studentlar', [])
-        sababli_ids = validated_data.pop('sababli_studentlar', [])
+        table_id = validated_data.pop('table')  # Jadval ID olish
+        table = Table.objects.get(id=table_id)  # Jadvalni olish
+        group_id = validated_data.pop('group')  # Guruh ID olish
+        kelgan_ids = validated_data.pop('kelgan_studentlar', [])  # Kelgan talabalar IDlarini olish
+        sababli_ids = validated_data.pop('sababli_studentlar', [])  # Sababli talabalar IDlarini olish
 
-        group = Group.objects.get(id=group_id)
-        lesson = Lesson.objects.create(group=group,table=table, **validated_data)
+        group = Group.objects.get(id=group_id)  # Guruhni olish
+        lesson = Lesson.objects.create(group=group, table=table, **validated_data)  # Yangi darsni yaratish
 
+        # Guruhdagi barcha talabalarni olish
         all_students = group.students.all()
-        hadir_student_ids = set(kelgan_ids + sababli_ids)
-        all_student_ids = set(all_students.values_list('id', flat=True))
-        kelmagan_ids = all_student_ids - hadir_student_ids
+        hadir_student_ids = set(kelgan_ids + sababli_ids)  # Kelgan va sababli talabalar IDlarini olish
+        all_student_ids = set(all_students.values_list('id', flat=True))  # Barcha talabalar IDlarini olish
+        kelmagan_ids = all_student_ids - hadir_student_ids  # Kelmagan talabalar
 
-        # LessonAttendance larni tayyorlash
+        # Davomatlarni yaratish
         lesson_attendances = []
 
         # Kelganlar
@@ -92,25 +98,30 @@ class LessonCreateSerializer(serializers.Serializer):
                 status='kelmadi'
             ))
 
-        LessonAttendance.objects.bulk_create(lesson_attendances)
+        LessonAttendance.objects.bulk_create(lesson_attendances)  # Davomatlarni ma'lumotlar bazasiga saqlash
 
-        return lesson
+        return lesson  # Yaratilgan darsni qaytarish
 
 
+# LessonUpdateSerializer, mavjud darsni yangilash uchun serializer
 class LessonUpdateSerializer(serializers.Serializer):
-    group = serializers.IntegerField(required=False)
-    title = serializers.CharField(required=False)
-    date = serializers.DateField(required=False)
-    table = serializers.IntegerField(required=False)
-    descriptions = serializers.CharField(required=False)
-    kelgan_studentlar = serializers.ListField(child=serializers.IntegerField(), required=False)
-    sababli_studentlar = serializers.ListField(child=serializers.IntegerField(), required=False)
+    group = serializers.IntegerField(required=False)  # Guruh ID (ixtiyoriy)
+    title = serializers.CharField(required=False)  # Dars nomi (ixtiyoriy)
+    date = serializers.DateField(required=False)  # Dars sanasi (ixtiyoriy)
+    table = serializers.IntegerField(required=False)  # Jadval ID (ixtiyoriy)
+    descriptions = serializers.CharField(required=False)  # Tavsif (ixtiyoriy)
+    kelgan_studentlar = serializers.ListField(child=serializers.IntegerField(),
+                                              required=False)  # Kelgan talabalar (ixtiyoriy)
+    sababli_studentlar = serializers.ListField(child=serializers.IntegerField(),
+                                               required=False)  # Sababli talabalar (ixtiyoriy)
 
+    # Guruhni tekshirish
     def validate_group(self, value):
         if not Group.objects.filter(id=value).exists():
             raise serializers.ValidationError("Bunday group mavjud emas.")
         return value
 
+    # Umumiy validatsiya
     def validate(self, attrs):
         kelgan = attrs.get('kelgan_studentlar', [])
         sababli = attrs.get('sababli_studentlar', [])
@@ -126,31 +137,32 @@ class LessonUpdateSerializer(serializers.Serializer):
             raise serializers.ValidationError("Student IDlar noto'g'ri yoki boshqa guruhdan.")
         return attrs
 
+    # Mavjud darsni yangilash
     def update(self, instance, validated_data):
-        instance.title = validated_data.get('title', instance.title)
-        instance.date = validated_data.get('date', instance.date)
+        instance.title = validated_data.get('title', instance.title)  # Dars nomini yangilash
+        instance.date = validated_data.get('date', instance.date)  # Dars sanasini yangilash
 
-        # 'table' maydonini yangilash
+        # Jadvalni yangilash
         table_id = validated_data.get('table', None)
         if table_id:
             try:
-                instance.table = Table.objects.get(id=table_id)  # Table instansiyasini olish
+                instance.table = Table.objects.get(id=table_id)  # Jadvalni olish
             except Table.DoesNotExist:
                 raise serializers.ValidationError("Bunday table mavjud emas.")
 
-        instance.descriptions = validated_data.get('descriptions', instance.descriptions)
+        instance.descriptions = validated_data.get('descriptions', instance.descriptions)  # Tavsifni yangilash
         instance.save()
 
         kelgan_ids = validated_data.get('kelgan_studentlar', [])
         sababli_ids = validated_data.get('sababli_studentlar', [])
 
-        # Oldin barcha davomatlarni yangilash
+        # Avvalgi davomatlarni yangilash
         for student_id in kelgan_ids + sababli_ids:
             lesson_attendance = LessonAttendance.objects.get(lesson=instance, student_id=student_id)
             if student_id in kelgan_ids:
-                lesson_attendance.status = 'keldi'
+                lesson_attendance.status = 'keldi'  # Kelgan talaba
             else:
-                lesson_attendance.status = 'sababli'
+                lesson_attendance.status = 'sababli'  # Sababli talaba
             lesson_attendance.save()
 
         # Kelmaganlarni yangilash
@@ -159,7 +171,7 @@ class LessonUpdateSerializer(serializers.Serializer):
         for student in all_students:
             if student.id not in attended_student_ids:
                 lesson_attendance = LessonAttendance.objects.get(lesson=instance, student_id=student.id)
-                lesson_attendance.status = 'kelmadi'
+                lesson_attendance.status = 'kelmadi'  # Kelmagan talaba
                 lesson_attendance.save()
 
-        return instance
+        return instance  # Yangilangan darsni qaytarish

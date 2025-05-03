@@ -7,6 +7,7 @@ from user_auth.serializers import GroupSerializer, CourseSerializer
 
 
 class GroupViewSet(ModelViewSet):
+    # Guruhlar bilan CRUD amallarini bajaradi, faqat xodim va adminlarga ruxsat
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
     permission_classes = [IsStaffOrAdminUser]
@@ -14,6 +15,7 @@ class GroupViewSet(ModelViewSet):
 
 
 class CourseViewSet(ModelViewSet):
+    # Kurslar bilan CRUD amallarini bajaradi, faqat xodim va adminlarga ruxsat
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
     permission_classes = [IsStaffOrAdminUser]
