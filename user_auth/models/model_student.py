@@ -4,7 +4,7 @@ from .auth_users import BaseModel
 
 class Student(BaseModel):
     user = models.OneToOneField('user_auth.User', on_delete=models.CASCADE,related_name='student')
-    fullname = models.CharField(max_length=50,blank=True,null=True)
+    fullname = models.CharField(max_length=50,default='Unknown Student')
     course = models.ManyToManyField('user_auth.Course',related_name="get_student_course")
     group = models.ManyToManyField('user_auth.Group', related_name='students')
     is_line = models.BooleanField(default=True)

@@ -6,7 +6,7 @@ from user_auth.models import Teacher, User, Departments, Course
 class TeacherSerializer(serializers.ModelSerializer):
     class Meta:
         model = Teacher
-        fields = ["id", 'user', 'departments', 'course', 'descriptions']
+        fields = ["id", 'user','fullname', 'departments', 'course', 'descriptions']
 
 
 class TeacherUserSerializer(serializers.ModelSerializer):
@@ -25,21 +25,23 @@ class TeacherUserSerializer(serializers.ModelSerializer):
 class TeacherPostSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     user = TeacherUserSerializer()
+    fullname = serializers.CharField()
     departments = serializers.PrimaryKeyRelatedField(queryset=Departments.objects.all(), many=True)
     course = serializers.PrimaryKeyRelatedField(queryset=Course.objects.all(), many=True)
 
     class Meta:
         model = Teacher
-        fields = ["id", "user", "departments", "course", "descriptions"]
+        fields = ["id", "user","fullname", "departments", "course", "descriptions"]
 
     def create(self, validated_data):
         user_db = validated_data.pop("user")
         user_db["is_active"] = True
         user_db["is_teacher"] = True
+        fullname = validated_data.pop("fullname")
         departments_db = validated_data.pop("departments")
         course_db = validated_data.pop("course")
         user = User.objects.create_user(**user_db)
-        teacher = Teacher.objects.create(user=user, **validated_data)
+        teacher = Teacher.objects.create(user=user,fullname=fullname, **validated_data)
         teacher.departments.set(departments_db)
         teacher.course.set(course_db)
         return teacher
@@ -62,6 +64,7 @@ class TeacherPostSerializer(serializers.ModelSerializer):
             user.save()
 
         # TEACHER UPDATE
+        instance.fullname = validated_data.get("fullname", instance.fullname)
         instance.descriptions = validated_data.get("descriptions", instance.descriptions)
         if departments is not None:
             instance.departments.set(departments)
