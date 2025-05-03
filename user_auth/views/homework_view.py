@@ -13,7 +13,6 @@ from user_auth.serializers import  HomeworkReviewSerializer, \
 
 class GroupHomeWorkAPIView(APIView):
     permission_classes = [IsTeacherUser,IsStaffUser,IsAdminUser]
-    @swagger_auto_schema(request_body=GroupHomeWorkSerializer,many=True)
     def get(self, request):
         homeworks = GroupHomeWork.objects.all()
         serializer = GroupHomeWorkSerializer(homeworks, many=True)
