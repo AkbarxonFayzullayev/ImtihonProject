@@ -261,3 +261,7 @@ class HomeworkReviewDetailView(APIView):
 
         review.delete()
         return Response({"success": "HomeworkReview o‘chirildi."}, status=status.HTTP_204_NO_CONTENT)
+
+class SalomBer(APIView):
+    def get(self,request):
+        return Response({"detail":"Salom funksiya ishladi"})

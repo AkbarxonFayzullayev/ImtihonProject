@@ -88,7 +88,8 @@ urlpatterns = [
     path('statistics/students/', StudentsStatisticsView.as_view()),
     path('statistics/payments/', PaymentStatisticsView.as_view()),
     path('statistics/lesson_attendance/<int:pk>/', LessonAttendanceStatisticsView.as_view()),
-    # path('statistics/students/', StudentStatisticsView.as_view()),
-    # path('statistics/teachers/', TeacherStatisticsView.as_view()),
+
+    # Test Funksiya
+    # path('test/salom/',SalomBer.as_view())
 
 ]
