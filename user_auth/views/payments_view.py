@@ -1,17 +1,17 @@
 from django.shortcuts import get_object_or_404
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
-from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from user_auth.add_permissions import IsStaffUser
+from user_auth.add_permissions import IsStaffOrAdminUser
 from user_auth.models.model_payments import Payment, PaymentType, Month
 from user_auth.serializers.payments_serializer import PaymentSerializer, PaymentTypeSerializer, MonthSerializer
 
 
 class MonthApi(APIView):
-    permission_classes = [ IsStaffUser, IsAdminUser]
+    permission_classes = [IsStaffOrAdminUser]
+
     @swagger_auto_schema(responses={200: MonthSerializer(many=True)})
     def get(self, request):
         month = Month.objects.all()
@@ -28,7 +28,8 @@ class MonthApi(APIView):
 
 
 class MonthDetail(APIView):
-    permission_classes = [IsStaffUser, IsAdminUser]
+    permission_classes = [IsStaffOrAdminUser]
+
     @swagger_auto_schema(responses={200: MonthSerializer()})
     def get(self, request, pk):
         month = get_object_or_404(Month, pk=pk)
@@ -61,7 +62,8 @@ class MonthDetail(APIView):
 
 
 class PaymentTypeApi(APIView):
-    permission_classes = [IsStaffUser, IsAdminUser]
+    permission_classes = [IsStaffOrAdminUser]
+
     @swagger_auto_schema(responses={200: PaymentTypeSerializer(many=True)})
     def get(self, request):
         payment_type = PaymentType.objects.all()
@@ -78,7 +80,8 @@ class PaymentTypeApi(APIView):
 
 
 class PaymentTypeDetail(APIView):
-    permission_classes = [IsStaffUser, IsAdminUser]
+    permission_classes = [IsStaffOrAdminUser]
+
     @swagger_auto_schema(responses={200: PaymentTypeSerializer()})
     def get(self, request, pk):
         payment_type = get_object_or_404(PaymentType, pk=pk)
@@ -111,7 +114,8 @@ class PaymentTypeDetail(APIView):
 
 
 class PaymentApi(APIView):
-    permission_classes = [IsStaffUser, IsAdminUser]
+    permission_classes = [IsStaffOrAdminUser]
+
     @swagger_auto_schema(responses={200: PaymentSerializer(many=True)})
     def get(self, request):
         payments = Payment.objects.all()
@@ -128,7 +132,8 @@ class PaymentApi(APIView):
 
 
 class PaymentDetail(APIView):
-    permission_classes = [IsStaffUser, IsAdminUser]
+    permission_classes = [IsStaffOrAdminUser]
+
     @swagger_auto_schema(responses={200: PaymentSerializer()})
     def get(self, request, pk):
         payments = get_object_or_404(Payment, pk=pk)

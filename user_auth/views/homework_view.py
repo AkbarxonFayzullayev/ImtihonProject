@@ -1,22 +1,25 @@
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
-from rest_framework.permissions import IsAdminUser
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from user_auth.add_permissions import IsTeacherUser, IsStaffUser, IsStudentUser
-from user_auth.models import  HomeworkReview, GroupHomeWork, \
+from user_auth.add_permissions import IsTeacherUser, IsTeacherOrStaffOrAdmin, IsStudentOrStaffOrAdmin
+from user_auth.models import HomeworkReview, GroupHomeWork, \
     HomeWork
-from user_auth.serializers import  HomeworkReviewSerializer, \
+from user_auth.serializers import HomeworkReviewSerializer, \
     GroupHomeWorkSerializer, HomeWorkSerializer
 
 
 class GroupHomeWorkAPIView(APIView):
-    permission_classes = [IsTeacherUser,IsStaffUser,IsAdminUser]
+    permission_classes = [IsTeacherOrStaffOrAdmin]
+
     def get(self, request):
         homeworks = GroupHomeWork.objects.all()
-        serializer = GroupHomeWorkSerializer(homeworks, many=True)
-        return Response(serializer.data)
+        paginator = PageNumberPagination()
+        paginated_homeworks = paginator.paginate_queryset(homeworks, request)
+        serializer = GroupHomeWorkSerializer(paginated_homeworks, many=True)
+        return paginator.get_paginated_response(serializer.data)
 
     @swagger_auto_schema(request_body=GroupHomeWorkSerializer)
     def post(self, request):
@@ -26,8 +29,10 @@ class GroupHomeWorkAPIView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class GroupHomeWorkDetailView(APIView):
-    permission_classes = [IsTeacherUser, IsStaffUser, IsAdminUser]
+    permission_classes = [IsTeacherOrStaffOrAdmin]
+
     def get(self, request, pk):
         try:
             group_homework = GroupHomeWork.objects.get(pk=pk)
@@ -74,11 +79,14 @@ class GroupHomeWorkDetailView(APIView):
 
 # HomeWork
 class HomeWorkAPIView(APIView):
-    permission_classes = [IsStudentUser, IsStaffUser, IsAdminUser,IsTeacherUser]
+    permission_classes = [IsStudentOrStaffOrAdmin]
+
     def get(self, request):
         homeworks = HomeWork.objects.all()
-        serializer = HomeWorkSerializer(homeworks, many=True)
-        return Response(data=serializer.data)
+        paginator = PageNumberPagination()
+        paginated_homeworks = paginator.paginate_queryset(homeworks, request)
+        serializer = HomeWorkSerializer(paginated_homeworks, many=True)
+        return paginator.get_paginated_response(serializer.data)
 
     @swagger_auto_schema(request_body=HomeWorkSerializer)
     def post(self, request):
@@ -90,7 +98,8 @@ class HomeWorkAPIView(APIView):
 
 
 class HomeWorkDetailView(APIView):
-    permission_classes = [IsStudentUser,IsTeacherUser,IsStaffUser,IsAdminUser]
+    permission_classes = [IsStudentOrStaffOrAdmin]
+
     def get(self, request, pk):
         try:
             homework = HomeWork.objects.get(pk=pk)
@@ -139,11 +148,14 @@ class HomeWorkDetailView(APIView):
 
 # HomeworkReview
 class HomeworkReviewAPIView(APIView):
-    permission_classes = [IsTeacherUser, IsStaffUser, IsAdminUser]
+    permission_classes = [IsTeacherOrStaffOrAdmin]
+
     def get(self, request):
         homework_reviews = HomeworkReview.objects.all()
-        serializer = HomeworkReviewSerializer(homework_reviews, many=True)
-        return Response(data=serializer.data)
+        paginator = PageNumberPagination()
+        paginated_reviews = paginator.paginate_queryset(homework_reviews, request)
+        serializer = HomeworkReviewSerializer(paginated_reviews, many=True)
+        return paginator.get_paginated_response(serializer.data)
 
     @swagger_auto_schema(request_body=HomeworkReviewSerializer)
     def post(self, request):
@@ -159,7 +171,8 @@ class HomeworkReviewAPIView(APIView):
 
 
 class HomeworkReviewDetailView(APIView):
-    permission_classes = [IsTeacherUser, IsStaffUser, IsAdminUser]
+    permission_classes = [IsTeacherOrStaffOrAdmin]
+
     def get(self, request, pk):
         try:
             review = HomeworkReview.objects.get(pk=pk)

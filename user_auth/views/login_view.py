@@ -1,8 +1,10 @@
 import random
 
-from ..add_permissions import IsStaffUser
+from rest_framework.pagination import PageNumberPagination
+
+from ..add_permissions import IsStaffOrAdminUser
 from ..make_token import *
-from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.contrib.auth.hashers import make_password
 from rest_framework import status
 from ..serializers import *
@@ -28,13 +30,16 @@ class LoginApi(APIView):
 
 
 class RegisterUserApi(APIView):
-    permission_classes = [IsAdminUser, IsStaffUser]
+    permission_classes = [IsStaffOrAdminUser]
 
     @swagger_auto_schema(responses={200: UserSerializer(many=True)})
     def get(self, request):
         users = User.objects.all().order_by("-id")
-        serializer = UserSerializer(users, many=True)
-        return Response(data=serializer.data)
+        paginator = PageNumberPagination()  # Paginatsiya ob'ektini yaratish
+        paginated_users = paginator.paginate_queryset(users, request)
+
+        serializer = UserSerializer(paginated_users, many=True)
+        return paginator.get_paginated_response(serializer.data)
 
     @swagger_auto_schema(request_body=UserSerializer)
     def post(self, request):
@@ -77,12 +82,12 @@ class ChangePasswordView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-
 # OTP generatsiyasi uchun funksiya
 def generate_otp():
     otp = str(random.randint(1000, 9999))
     print(f"Generated OTP: {otp}")
     return otp
+
 
 class PhoneSendOTP(APIView):
     # permission_classes = [IsAuthenticated, ]
@@ -110,6 +115,7 @@ class PhoneSendOTP(APIView):
             'status': False,
             'message': 'Telefon raqami tizimda mavjud emas'
         }, status=status.HTTP_400_BAD_REQUEST)
+
 
 class ResetPassword(APIView):
     # permission_classes = [IsAuthenticated, ]

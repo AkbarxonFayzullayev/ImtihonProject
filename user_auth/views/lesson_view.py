@@ -1,18 +1,19 @@
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.generics import UpdateAPIView
-from rest_framework.permissions import IsAdminUser
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from ..add_permissions import IsTeacherUser, IsStaffUser
+from ..add_permissions import IsTeacherOrStaffOrAdmin
 from ..models import Lesson, LessonAttendance
 from ..serializers.lesson_serializer import LessonAttendanceSerializer, LessonCreateSerializer, LessonSerializer, \
     LessonUpdateSerializer
 
 
 class LessonCreateWithAttendance(APIView):
-    permission_classes = [IsTeacherUser, IsStaffUser, IsAdminUser]
+    permission_classes = [IsTeacherOrStaffOrAdmin]
+
     @swagger_auto_schema(request_body=LessonCreateSerializer)
     def post(self, request):
         lesson_data = request.data
@@ -48,7 +49,8 @@ class LessonCreateWithAttendance(APIView):
 
 
 class AllLessonList(APIView):
-    permission_classes = [IsStaffUser, IsAdminUser,IsTeacherUser]
+    permission_classes = [IsTeacherOrStaffOrAdmin]
+
     def get(self, request):
         lessons = Lesson.objects.all()
         result = []
@@ -82,11 +84,14 @@ class AllLessonList(APIView):
                 "kechikkan_studentlar": kechikkan
             })
 
-        return Response(result, status=200)
+        paginator = PageNumberPagination()
+        paginated_result = paginator.paginate_queryset(result, request)
+        return paginator.get_paginated_response(paginated_result)
 
 
 class LessonWithAttendanceGet(APIView):
-    permission_classes = [IsTeacherUser, IsStaffUser, IsAdminUser]
+    permission_classes = [IsTeacherOrStaffOrAdmin]
+
     def get(self, request, pk):
         try:
             lesson = Lesson.objects.get(pk=pk)
@@ -129,11 +134,12 @@ class LessonWithAttendanceGet(APIView):
 class UpdateLessonView(UpdateAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
-    permission_classes = [IsTeacherUser, IsStaffUser, IsAdminUser]
+    permission_classes = [IsTeacherOrStaffOrAdmin]
 
 
 class DeleteLessonView(APIView):
-    permission_classes = [IsTeacherUser, IsStaffUser, IsAdminUser]
+    permission_classes = [IsTeacherOrStaffOrAdmin]
+
     def delete(self, request, pk):
         try:
             lesson = Lesson.objects.get(pk=pk)
@@ -146,7 +152,8 @@ class DeleteLessonView(APIView):
 
 
 class AttendanceUpdateView(APIView):
-    permission_classes = [IsTeacherUser, IsStaffUser, IsAdminUser]
+    permission_classes = [IsTeacherOrStaffOrAdmin]
+
     @swagger_auto_schema(request_body=LessonAttendanceSerializer)
     def put(self, request, pk):
         try:
@@ -171,8 +178,10 @@ class AttendanceUpdateView(APIView):
             return Response(data=serializer.data)
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class LessonFullUpdateView(APIView):
-    permission_classes = [IsTeacherUser, IsStaffUser, IsAdminUser]
+    permission_classes = [IsTeacherOrStaffOrAdmin]
+
     @swagger_auto_schema(request_body=LessonUpdateSerializer)
     def put(self, request, pk):
         try:

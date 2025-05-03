@@ -1,14 +1,12 @@
-from datetime import datetime
-
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.exceptions import NotFound
-from rest_framework.permissions import IsAdminUser
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
-from user_auth.add_permissions import IsStaffUser, IsStudentUser
-from ..models import Student, Parents, HomeWork, HomeworkReview, LessonAttendance, Group
+from user_auth.add_permissions import IsStudentUser, IsStaffOrAdminUser
+from ..models import Student, Parents, HomeWork, HomeworkReview, LessonAttendance
 from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 
@@ -17,15 +15,18 @@ from ..serializers.student_serilalizer import StudentSerializer, StudentPostSeri
 
 
 class Student_Api(APIView):
-    permission_classes = [IsAdminUser, IsStaffUser]
+    permission_classes = [IsStaffOrAdminUser]
 
     @swagger_auto_schema(
         responses={200: StudentSerializer(many=True)}
     )
     def get(self, request):
-        students = Student.objects.all()
-        serializer = StudentSerializer(students, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        students = Student.objects.all()  # Barcha studentlarni olish
+        paginator = PageNumberPagination()  # Paginatsiya ob'ektini yaratish
+        paginated_students = paginator.paginate_queryset(students, request)  # Paginatsiya qo'llash
+
+        serializer = StudentSerializer(paginated_students, many=True)  # Studentlarni serializatsiya qilish
+        return paginator.get_paginated_response(serializer.data)
 
     @swagger_auto_schema(
         request_body=StudentPostSerializer
@@ -39,7 +40,7 @@ class Student_Api(APIView):
 
 
 class StudentDetail(APIView):
-    permission_classes = [IsAdminUser, IsStaffUser]
+    permission_classes = [IsStaffOrAdminUser]
 
     @swagger_auto_schema(responses={200: StudentPostSerializer()})
     def get(self, request, pk):
@@ -77,7 +78,7 @@ class StudentDetail(APIView):
 
 
 class ParentsViewSet(ModelViewSet):
-    permission_classes = [IsAdminUser, IsStaffUser]
+    permission_classes = [IsStaffOrAdminUser]
     queryset = Parents.objects.all()
     serializer_class = ParentsSerializer
 

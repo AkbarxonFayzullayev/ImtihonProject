@@ -1,12 +1,11 @@
-from django.db.models.expressions import result
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.exceptions import NotFound
-from rest_framework.permissions import IsAdminUser
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
-from user_auth.add_permissions import IsStaffUser, IsTeacherUser
+from user_auth.add_permissions import IsTeacherUser, IsStaffOrAdminUser
 from ..models import Group
 from ..models.model_teacher import *
 from ..serializers import TeacherSerializer, TeacherPostSerializer, DepartmentsSerializer
@@ -15,15 +14,18 @@ from drf_yasg.utils import swagger_auto_schema
 
 
 class Teacher_Api(APIView):
-    permission_classes = [IsAdminUser, IsStaffUser]
+    permission_classes = [IsStaffOrAdminUser]
 
     @swagger_auto_schema(
         responses={200: TeacherSerializer(many=True)}
     )
     def get(self, request):
-        teachers = Teacher.objects.all()
-        serializer = TeacherSerializer(teachers, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        teachers = Teacher.objects.all()  # Barcha o'qituvchilarni olish
+        paginator = PageNumberPagination()  # Paginatsiya ob'ektini yaratish
+        paginated_teachers = paginator.paginate_queryset(teachers, request)  # Paginatsiya qo'llash
+
+        serializer = TeacherSerializer(paginated_teachers, many=True)  # O'qituvchilarni serializatsiya qilish
+        return paginator.get_paginated_response(serializer.data)
 
     @swagger_auto_schema(request_body=TeacherPostSerializer)
     def post(self, request):
@@ -35,7 +37,7 @@ class Teacher_Api(APIView):
 
 
 class TeacherDetail(APIView):
-    permission_classes = [IsAdminUser, IsStaffUser]
+    permission_classes = [IsStaffOrAdminUser]
 
     @swagger_auto_schema(responses={200: TeacherPostSerializer()})
     def get(self, request, pk):
@@ -75,7 +77,9 @@ class TeacherDetail(APIView):
 class DepartmentsViewSet(ModelViewSet):
     queryset = Departments.objects.all()
     serializer_class = DepartmentsSerializer
-    permission_classes = [IsAdminUser, IsStaffUser]
+    permission_classes = [IsStaffOrAdminUser]
+    pagination_class = PageNumberPagination
+
 
 class TeacherGetGroups(APIView):
     permission_classes = [IsTeacherUser]
@@ -97,6 +101,7 @@ class TeacherGetGroups(APIView):
             })
 
         return Response(response)
+
 
 class TeacherGetGroupStudents(APIView):
     permission_classes = [IsTeacherUser]

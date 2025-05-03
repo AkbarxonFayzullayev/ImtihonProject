@@ -1,17 +1,18 @@
 from django.db.models import Sum, Avg
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
-from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from user_auth.add_permissions import IsStaffUser
+from user_auth.add_permissions import IsStaffOrAdminUser
 from user_auth.models import LessonAttendance, Group, Student
 from user_auth.models.model_payments import Payment
 from user_auth.serializers.statistics_serializer import DateRangeSerializer
 
+
 class StudentsStatisticsView(APIView):
-    permission_classes = [IsStaffUser, IsAdminUser]
+    permission_classes = [IsStaffOrAdminUser]
+
     @swagger_auto_schema(request_body=DateRangeSerializer)
     def post(self, request):
         serializer = DateRangeSerializer(data=request.data)
@@ -67,9 +68,9 @@ class StudentsStatisticsView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-
 class LessonAttendanceStatisticsView(APIView):
-    permission_classes = [IsStaffUser, IsAdminUser]
+    permission_classes = [IsStaffOrAdminUser]
+
     @swagger_auto_schema(request_body=DateRangeSerializer)
     def post(self, request, pk):
         serializer = DateRangeSerializer(data=request.data)
@@ -131,7 +132,8 @@ class LessonAttendanceStatisticsView(APIView):
 
 
 class PaymentStatisticsView(APIView):
-    permission_classes = [IsStaffUser, IsAdminUser]
+    permission_classes = [IsStaffOrAdminUser]
+
     @swagger_auto_schema(request_body=DateRangeSerializer)
     def post(self, request):
         serializer = DateRangeSerializer(data=request.data)
@@ -140,11 +142,15 @@ class PaymentStatisticsView(APIView):
             end_date = serializer.validated_data.pop("end_date")
 
             total_payments = Payment.objects.filter(created_ed__range=(start_date, end_date)).count()
-            total_amount_paid = Payment.objects.filter(created_ed__range=(start_date, end_date)).aggregate(total=Sum('price'))['total'] or 0
-            average_payment = Payment.objects.filter(created_ed__range=(start_date, end_date)).aggregate(avg=Avg('price'))['avg'] or 0
+            total_amount_paid = \
+                Payment.objects.filter(created_ed__range=(start_date, end_date)).aggregate(total=Sum('price'))[
+                    'total'] or 0
+            average_payment = \
+                Payment.objects.filter(created_ed__range=(start_date, end_date)).aggregate(avg=Avg('price'))['avg'] or 0
 
             payments_by_student = Payment.objects.filter(created_ed__range=(start_date, end_date)) \
-                .values('month__title','student__id', 'student__fullname','student__group__title').annotate(total_paid=Sum('price')).order_by('-total_paid')
+                .values('month__title', 'student__id', 'student__fullname', 'student__group__title').annotate(
+                total_paid=Sum('price')).order_by('-total_paid')
 
             payments_list = [
                 {
