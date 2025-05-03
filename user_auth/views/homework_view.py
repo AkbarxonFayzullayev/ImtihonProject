@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 from user_auth.add_permissions import IsTeacherUser, IsTeacherOrStaffOrAdmin, IsStudentOrStaffOrAdmin, \
     IsStudentOrTeacherOrStaffOrAdminUser
 from user_auth.models import HomeworkReview, GroupHomeWork, \
-    HomeWork
+    HomeWork, Student, Teacher
 from user_auth.serializers import HomeworkReviewSerializer, \
     GroupHomeWorkSerializer, HomeWorkSerializer
 
@@ -16,8 +16,38 @@ class GroupHomeWorkAPIView(APIView):
 
     # Barcha guruh uy vazifalarini olish
     def get(self, request):
-        homeworks = GroupHomeWork.objects.all()
-        serializer = GroupHomeWorkSerializer(homeworks, many=True)
+        user = request.user
+        queryset = None  # Querysetni boshlang'ich qiymatga o'rnatish
+
+        # Talaba uchun uy vazifalarini olish
+        if user.is_student:
+            try:
+                student = Student.objects.get(user=user)  # Talabani olish
+                queryset = GroupHomeWork.objects.filter(
+                    group=student.group)  # Talabaga tegishli guruhdagi uy vazifalari
+            except Student.DoesNotExist:
+                return Response({"detail": "Talaba topilmadi."}, status=status.HTTP_404_NOT_FOUND)
+
+        # O'qituvchi uchun uy vazifalarini olish
+        elif user.is_teacher:
+            try:
+                teacher = Teacher.objects.get(user=user)  # O'qituvchini olish
+                # 'group_teacher' o'rniga 'teacher'ni filterni to'g'ri yozish
+                queryset = GroupHomeWork.objects.filter(
+                    group__teacher=teacher)  # O'qituvchiga tegishli guruhdagi uy vazifalari
+            except Teacher.DoesNotExist:
+                return Response({"detail": "O'qituvchi topilmadi."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Admin yoki Staff uchun barcha uy vazifalarini olish
+        elif user.is_superuser or user.is_staff:
+            queryset = GroupHomeWork.objects.all()  # Barcha uy vazifalari
+
+        # Foydalanuvchi turi aniqlanmagan bo'lsa
+        if queryset is None:
+            return Response({"detail": "Foydalanuvchi turi aniqlanmadi."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Serializer yordamida ma'lumotlarni qaytarish
+        serializer = GroupHomeWorkSerializer(queryset, many=True)
         return Response(serializer.data)
 
     # Yangi guruh uy vazifasini yaratish
@@ -72,7 +102,6 @@ class GroupHomeWorkDetailView(APIView):
 
     # O‘chirish
     def delete(self, request, pk):
-        self.permission_classes = [IsTeacherUser]
         try:
             homework = GroupHomeWork.objects.get(pk=pk)
         except HomeWork.DoesNotExist:
@@ -94,9 +123,13 @@ class HomeWorkAPIView(APIView):
     # Yangi uy vazifasini yaratish
     @swagger_auto_schema(request_body=HomeWorkSerializer)
     def post(self, request):
+        user = request.user
+        if not user and user.is_student:
+            return Response({"detail": "Siz student emassiz"})
         serializer = HomeWorkSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            student = Student.objects.get(user=user)
+            serializer.save(student=student)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -143,7 +176,7 @@ class HomeWorkDetailView(APIView):
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     # O‘chirish
-    @swagger_auto_schema(request_body=HomeWorkSerializer)
+    @swagger_auto_schema(responses={204: "Homework o'chirildi"})
     def delete(self, request, pk):
         try:
             homework = HomeWork.objects.get(pk=pk)
