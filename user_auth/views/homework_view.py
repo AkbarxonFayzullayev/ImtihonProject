@@ -12,7 +12,8 @@ from user_auth.serializers import  HomeworkReviewSerializer, \
 
 
 class GroupHomeWorkAPIView(APIView):
-    permission_classes = [IsTeacherUser,IsStaffUser,IsAdminUser,IsStudentUser]
+    permission_classes = [IsTeacherUser,IsStaffUser,IsAdminUser]
+    @swagger_auto_schema(request_body=GroupHomeWorkSerializer,many=True)
     def get(self, request):
         homeworks = GroupHomeWork.objects.all()
         serializer = GroupHomeWorkSerializer(homeworks, many=True)
@@ -20,17 +21,15 @@ class GroupHomeWorkAPIView(APIView):
 
     @swagger_auto_schema(request_body=GroupHomeWorkSerializer)
     def post(self, request):
-        self.permission_classes = [IsTeacherUser]
         serializer = GroupHomeWorkSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
 class GroupHomeWorkDetailView(APIView):
+    permission_classes = [IsTeacherUser, IsStaffUser, IsAdminUser]
     def get(self, request, pk):
-        self.permission_classes = [IsStudentUser,IsTeacherUser,IsStaffUser,IsAdminUser]
         try:
             group_homework = GroupHomeWork.objects.get(pk=pk)
         except GroupHomeWork.DoesNotExist:
@@ -40,7 +39,6 @@ class GroupHomeWorkDetailView(APIView):
 
     @swagger_auto_schema(request_body=GroupHomeWorkSerializer)
     def put(self, request, pk):
-        self.permission_classes = [IsTeacherUser]
         try:
             group_homework = GroupHomeWork.objects.get(pk=pk)
         except GroupHomeWork.DoesNotExist:
@@ -53,7 +51,6 @@ class GroupHomeWorkDetailView(APIView):
 
     @swagger_auto_schema(request_body=GroupHomeWorkSerializer)
     def patch(self, request, pk):
-        self.permission_classes = [IsTeacherUser]
         try:
             group_homework = GroupHomeWork.objects.get(pk=pk)
         except GroupHomeWork.DoesNotExist:
@@ -78,16 +75,14 @@ class GroupHomeWorkDetailView(APIView):
 
 # HomeWork
 class HomeWorkAPIView(APIView):
-
+    permission_classes = [IsStudentUser, IsStaffUser, IsAdminUser,IsTeacherUser]
     def get(self, request):
-        self.permission_classes = [IsTeacherUser, IsStudentUser, IsStaffUser, IsAdminUser]
         homeworks = HomeWork.objects.all()
         serializer = HomeWorkSerializer(homeworks, many=True)
         return Response(data=serializer.data)
 
     @swagger_auto_schema(request_body=HomeWorkSerializer)
     def post(self, request):
-        self.permission_classes = [IsStudentUser]
         serializer = HomeWorkSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -96,9 +91,8 @@ class HomeWorkAPIView(APIView):
 
 
 class HomeWorkDetailView(APIView):
-    permission_classes = [IsStudentUser,IsTeacherUser]
+    permission_classes = [IsStudentUser,IsTeacherUser,IsStaffUser,IsAdminUser]
     def get(self, request, pk):
-        self.permission_classes = [IsStaffUser,IsAdminUser,IsTeacherUser]
         try:
             homework = HomeWork.objects.get(pk=pk)
         except HomeWork.DoesNotExist:
@@ -109,7 +103,6 @@ class HomeWorkDetailView(APIView):
 
     @swagger_auto_schema(request_body=HomeWorkSerializer)
     def put(self, request, pk):
-        self.permission_classes = [IsStudentUser]
         try:
             homework = HomeWork.objects.get(pk=pk)
         except HomeWork.DoesNotExist:
@@ -123,7 +116,6 @@ class HomeWorkDetailView(APIView):
 
     @swagger_auto_schema(request_body=HomeWorkSerializer)
     def patch(self, request, pk):
-        self.permission_classes = [IsStudentUser]
         try:
             homework = HomeWork.objects.get(pk=pk)
         except HomeWork.DoesNotExist:
@@ -137,7 +129,6 @@ class HomeWorkDetailView(APIView):
 
     @swagger_auto_schema(request_body=HomeWorkSerializer)
     def delete(self, request, pk):
-        self.permission_classes = [IsStudentUser]
         try:
             homework = HomeWork.objects.get(pk=pk)
         except HomeWork.DoesNotExist:
@@ -149,15 +140,14 @@ class HomeWorkDetailView(APIView):
 
 # HomeworkReview
 class HomeworkReviewAPIView(APIView):
+    permission_classes = [IsTeacherUser, IsStaffUser, IsAdminUser]
     def get(self, request):
-        self.permission_classes = [IsTeacherUser,IsAdminUser,IsStaffUser]
         homework_reviews = HomeworkReview.objects.all()
         serializer = HomeworkReviewSerializer(homework_reviews, many=True)
         return Response(data=serializer.data)
 
     @swagger_auto_schema(request_body=HomeworkReviewSerializer)
     def post(self, request):
-        self.permission_classes = [IsTeacherUser]
         serializer = HomeworkReviewSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -170,9 +160,8 @@ class HomeworkReviewAPIView(APIView):
 
 
 class HomeworkReviewDetailView(APIView):
-
+    permission_classes = [IsTeacherUser, IsStaffUser, IsAdminUser]
     def get(self, request, pk):
-        self.permission_classes = [IsTeacherUser,IsStaffUser,IsAdminUser]
         try:
             review = HomeworkReview.objects.get(pk=pk)
         except HomeworkReview.DoesNotExist:
@@ -183,7 +172,6 @@ class HomeworkReviewDetailView(APIView):
 
     @swagger_auto_schema(request_body=HomeworkReviewSerializer)
     def put(self, request, pk):
-        self.permission_classes = [IsTeacherUser]
         try:
             review = HomeworkReview.objects.get(pk=pk)
         except HomeworkReview.DoesNotExist:
@@ -197,7 +185,6 @@ class HomeworkReviewDetailView(APIView):
 
     @swagger_auto_schema(request_body=HomeworkReviewSerializer)
     def patch(self, request, pk):
-        self.permission_classes = [IsTeacherUser]
         try:
             review = HomeworkReview.objects.get(pk=pk)
         except HomeworkReview.DoesNotExist:
@@ -211,7 +198,6 @@ class HomeworkReviewDetailView(APIView):
 
     @swagger_auto_schema(responses={204: "Homework o'chirildi"})
     def delete(self, request, pk):
-        self.permission_classes = [IsTeacherUser]
         try:
             review = HomeworkReview.objects.get(pk=pk)
         except HomeworkReview.DoesNotExist:

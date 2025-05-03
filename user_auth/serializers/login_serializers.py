@@ -56,16 +56,16 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
         instance.password = validated_data.get('password', instance.password)
 
         if not validated_data['new_password']:
-            raise serializers.ValidationError({'new_password': 'not found'})
+            raise serializers.ValidationError({'new_password': 'new_password kiritilishi shart'})
 
         if not validated_data['old_password']:
-            raise serializers.ValidationError({'old_password': 'not found'})
+            raise serializers.ValidationError({'old_password': 'old_password kiritilishi shart'})
 
         if not instance.check_password(validated_data['old_password']):
-            raise serializers.ValidationError({'old_password': 'wrong password'})
+            raise serializers.ValidationError({'old_password': 'old_password xato'})
 
         if validated_data['new_password'] != validated_data['re_new_password']:
-            raise serializers.ValidationError({'passwords': 'passwords do not match'})
+            raise serializers.ValidationError({'passwords': "new_password va renew_password bir biriga teng bo'lishi kerak"})
 
         if validated_data['new_password'] == validated_data['re_new_password'] and instance.check_password(
                 validated_data['old_password']):
@@ -95,6 +95,8 @@ class SMSSerializer(serializers.Serializer):
 class VerifySMSSerializer(serializers.Serializer):
     phone_number = serializers.CharField()
     verification_code = serializers.CharField()
+    new_password = serializers.CharField()
+    renew_password = serializers.CharField()
 
 class RefreshTokenSerializer(serializers.Serializer):
     refresh = serializers.CharField()

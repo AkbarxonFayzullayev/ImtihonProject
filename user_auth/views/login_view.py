@@ -77,14 +77,15 @@ class ChangePasswordView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-def send_otp():
-    otp = str(random.randint(1001, 9999))
-    print(otp)
+
+# OTP generatsiyasi uchun funksiya
+def generate_otp():
+    otp = str(random.randint(1000, 9999))
+    print(f"Generated OTP: {otp}")
     return otp
 
-
 class PhoneSendOTP(APIView):
-    permission_classes = [IsAuthenticated, ]
+    # permission_classes = [IsAuthenticated, ]
 
     @swagger_auto_schema(request_body=SMSSerializer)
     def post(self, request, *args, **kwargs):
@@ -96,28 +97,22 @@ class PhoneSendOTP(APIView):
             }, status=status.HTTP_400_BAD_REQUEST)
 
         phone = str(phone_number)
-        user = User.objects.filter(phone_number__iexact=phone)
-        if user.exists():
+        user = User.objects.filter(phone_number=phone).first()
+        if user:
+            otp = generate_otp()
+            cache.set(phone, otp, 600)  # OTP 10 daqiqa davomida amal qiladi
             return Response({
-                'status': False,
-                'detail': 'Bu telefon raqami allaqachon ro‘yxatdan o‘tgan'
-            }, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            key = send_otp()
-            if key:
-                cache.set(phone, key, 600)
-                return Response({
-                    "status": True,
-                    "message": "SMS muvaffaqiyatli yuborildi"
-                }, status=status.HTTP_200_OK)
-            return Response({
-                "status": False,
-                "message": "SMS yuborishda xatolik yuz berdi"
-            }, status=status.HTTP_400_BAD_REQUEST)
+                "status": True,
+                "message": "Tasdiqlash kodi yuborildi",
+                "code": otp
+            }, status=status.HTTP_200_OK)
+        return Response({
+            'status': False,
+            'message': 'Telefon raqami tizimda mavjud emas'
+        }, status=status.HTTP_400_BAD_REQUEST)
 
-
-class VerifySMS(APIView):
-    permission_classes = [IsAuthenticated]
+class ResetPassword(APIView):
+    # permission_classes = [IsAuthenticated, ]
 
     @swagger_auto_schema(request_body=VerifySMSSerializer)
     def post(self, request):
@@ -126,17 +121,42 @@ class VerifySMS(APIView):
         if serializer.is_valid():
             phone_number = serializer.validated_data['phone_number']
             verification_code = serializer.validated_data['verification_code']
-            cached_code = str(cache.get(phone_number))
+            new_password = serializer.validated_data['new_password']
+            renew_password = serializer.validated_data['renew_password']
 
-            if verification_code == cached_code:
+            # 1. OTPni keshdan tekshiramiz
+            cached_otp = cache.get(phone_number)
+
+            if cached_otp != verification_code:
+                return Response({
+                    'status': False,
+                    'message': 'Noto‘g‘ri tasdiqlash kodi'
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            # 2. Parolni tekshiramiz
+            if new_password != renew_password:
+                return Response({
+                    'status': False,
+                    'message': 'Parollar mos kelmaydi'
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            # 3. Parolni yangilaymiz
+            user = User.objects.filter(phone_number=phone_number).first()
+            if user:
+                user.set_password(new_password)
+                user.save()
+
+                # OTPni tozalash
+                cache.delete(phone_number)
+
                 return Response({
                     'status': True,
-                    'detail': 'OTP mos tushdi. Ro‘yxatdan o‘tishni davom ettiring.'
+                    'message': 'Parol muvaffaqiyatli yangilandi'
                 }, status=status.HTTP_200_OK)
             else:
                 return Response({
                     'status': False,
-                    'detail': 'Noto‘g‘ri tasdiqlash kodi.'
+                    'message': 'Foydalanuvchi topilmadi'
                 }, status=status.HTTP_400_BAD_REQUEST)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -1,14 +1,17 @@
 from django.db.models import Sum, Avg
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
+from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from user_auth.add_permissions import IsStaffUser
 from user_auth.models import LessonAttendance, Group, Student
 from user_auth.models.model_payments import Payment
 from user_auth.serializers.statistics_serializer import DateRangeSerializer
 
 class StudentsStatisticsView(APIView):
+    permission_classes = [IsStaffUser, IsAdminUser]
     @swagger_auto_schema(request_body=DateRangeSerializer)
     def post(self, request):
         serializer = DateRangeSerializer(data=request.data)
@@ -66,6 +69,7 @@ class StudentsStatisticsView(APIView):
 
 
 class LessonAttendanceStatisticsView(APIView):
+    permission_classes = [IsStaffUser, IsAdminUser]
     @swagger_auto_schema(request_body=DateRangeSerializer)
     def post(self, request, pk):
         serializer = DateRangeSerializer(data=request.data)
@@ -126,41 +130,8 @@ class LessonAttendanceStatisticsView(APIView):
         return Response(data=serializer.errors)
 
 
-# class PaymentsStatisticsView(APIView):
-#     @swagger_auto_schema(responses={200: PaymentsStatisticSerializer(many=True)})
-#     def get(self, request):
-#         total = Payment.objects.aggregate(
-#             total_payments=Sum('amount'),
-#             average_payment=Avg('amount')
-#         )
-#
-#         data = {
-#             "total_payments": Payment.objects.count(),
-#             "total_amount": total['total_payments'] or 0,
-#             "average_payment": total['average_payment'] or 0
-#         }
-#
-#         return Response(data)
-
-
-# class TeacherStatisticsView(APIView):
-#     @swagger_auto_schema(responses={200: TeacherStatisticSerializer(many=True)})
-#     def get(self, request):
-#         teachers = Teacher.objects.all()
-#         data = []
-#
-#         for teacher in teachers:
-#             groups = teacher.group_teacher.all()
-#             student_count = sum(group.students.count() for group in groups)
-#
-#             data.append({
-#                 "teacher_name": teacher.user.phone_number,
-#                 "total_groups": groups.count(),
-#                 "total_students": student_count
-#             })
-#
-#             return Response(data)
 class PaymentStatisticsView(APIView):
+    permission_classes = [IsStaffUser, IsAdminUser]
     @swagger_auto_schema(request_body=DateRangeSerializer)
     def post(self, request):
         serializer = DateRangeSerializer(data=request.data)

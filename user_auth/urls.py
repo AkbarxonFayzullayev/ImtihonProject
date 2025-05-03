@@ -37,7 +37,7 @@ urlpatterns = [
     path('auth_user/create/user/', RegisterUserApi.as_view()),
     path('auth_user/change_password/', ChangePasswordView.as_view()),
     path('auth_user/phone_send_otp/', PhoneSendOTP.as_view()),
-    path('auth_user/verify_sms/', VerifySMS.as_view()),
+    path('auth_user/verify_sms/', ResetPassword.as_view()),
     path('auth_user/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('auth_user/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('auth_user/logout/', LogoutView.as_view()),
