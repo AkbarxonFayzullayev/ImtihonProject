@@ -90,6 +90,6 @@ urlpatterns = [
     path('statistics/lesson_attendance/<int:pk>/', LessonAttendanceStatisticsView.as_view()),
 
     # Test Funksiya
-    # path('test/salom/',SalomBer.as_view())
+    path('test/salom/',SalomBer.as_view())
 
 ]
