@@ -35,11 +35,8 @@ class RegisterUserApi(APIView):
     @swagger_auto_schema(responses={200: UserSerializer(many=True)})
     def get(self, request):
         users = User.objects.all().order_by("-id")
-        paginator = PageNumberPagination()  # Paginatsiya ob'ektini yaratish
-        paginated_users = paginator.paginate_queryset(users, request)
-
-        serializer = UserSerializer(paginated_users, many=True)
-        return paginator.get_paginated_response(serializer.data)
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data)
 
     @swagger_auto_schema(request_body=UserSerializer)
     def post(self, request):

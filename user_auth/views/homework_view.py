@@ -16,10 +16,8 @@ class GroupHomeWorkAPIView(APIView):
 
     def get(self, request):
         homeworks = GroupHomeWork.objects.all()
-        paginator = PageNumberPagination()
-        paginated_homeworks = paginator.paginate_queryset(homeworks, request)
-        serializer = GroupHomeWorkSerializer(paginated_homeworks, many=True)
-        return paginator.get_paginated_response(serializer.data)
+        serializer = GroupHomeWorkSerializer(homeworks, many=True)
+        return Response(serializer.data)
 
     @swagger_auto_schema(request_body=GroupHomeWorkSerializer)
     def post(self, request):
@@ -82,11 +80,9 @@ class HomeWorkAPIView(APIView):
     permission_classes = [IsStudentOrStaffOrAdmin]
 
     def get(self, request):
-        homeworks = HomeWork.objects.all()
-        paginator = PageNumberPagination()
-        paginated_homeworks = paginator.paginate_queryset(homeworks, request)
-        serializer = HomeWorkSerializer(paginated_homeworks, many=True)
-        return paginator.get_paginated_response(serializer.data)
+        homeworks = GroupHomeWork.objects.all()
+        serializer = GroupHomeWorkSerializer(homeworks, many=True)
+        return Response(serializer.data)
 
     @swagger_auto_schema(request_body=HomeWorkSerializer)
     def post(self, request):
@@ -151,11 +147,9 @@ class HomeworkReviewAPIView(APIView):
     permission_classes = [IsTeacherOrStaffOrAdmin]
 
     def get(self, request):
-        homework_reviews = HomeworkReview.objects.all()
-        paginator = PageNumberPagination()
-        paginated_reviews = paginator.paginate_queryset(homework_reviews, request)
-        serializer = HomeworkReviewSerializer(paginated_reviews, many=True)
-        return paginator.get_paginated_response(serializer.data)
+        homework_reviews = HomeworkReview.objects.all()  # Barcha homework review-larni olish
+        serializer = HomeworkReviewSerializer(homework_reviews, many=True)  # HomeworkReview-larni serializatsiya qilish
+        return Response(serializer.data)
 
     @swagger_auto_schema(request_body=HomeworkReviewSerializer)
     def post(self, request):

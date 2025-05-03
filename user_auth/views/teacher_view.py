@@ -21,11 +21,8 @@ class Teacher_Api(APIView):
     )
     def get(self, request):
         teachers = Teacher.objects.all()  # Barcha o'qituvchilarni olish
-        paginator = PageNumberPagination()  # Paginatsiya ob'ektini yaratish
-        paginated_teachers = paginator.paginate_queryset(teachers, request)  # Paginatsiya qo'llash
-
-        serializer = TeacherSerializer(paginated_teachers, many=True)  # O'qituvchilarni serializatsiya qilish
-        return paginator.get_paginated_response(serializer.data)
+        serializer = TeacherSerializer(teachers, many=True)  # Serializatsiya
+        return Response(serializer.data)
 
     @swagger_auto_schema(request_body=TeacherPostSerializer)
     def post(self, request):

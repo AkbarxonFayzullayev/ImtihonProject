@@ -22,11 +22,8 @@ class Student_Api(APIView):
     )
     def get(self, request):
         students = Student.objects.all()  # Barcha studentlarni olish
-        paginator = PageNumberPagination()  # Paginatsiya ob'ektini yaratish
-        paginated_students = paginator.paginate_queryset(students, request)  # Paginatsiya qo'llash
-
-        serializer = StudentSerializer(paginated_students, many=True)  # Studentlarni serializatsiya qilish
-        return paginator.get_paginated_response(serializer.data)
+        serializer = StudentSerializer(students, many=True)  # Serializatsiya qilish
+        return Response(serializer.data)
 
     @swagger_auto_schema(
         request_body=StudentPostSerializer
