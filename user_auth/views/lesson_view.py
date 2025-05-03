@@ -84,9 +84,7 @@ class AllLessonList(APIView):
                 "kechikkan_studentlar": kechikkan
             })
 
-        paginator = PageNumberPagination()
-        paginated_result = paginator.paginate_queryset(result, request)
-        return paginator.get_paginated_response(paginated_result)
+        return Response(result)
 
 
 class LessonWithAttendanceGet(APIView):
