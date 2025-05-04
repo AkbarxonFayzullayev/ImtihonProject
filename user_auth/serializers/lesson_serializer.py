@@ -131,9 +131,9 @@ class LessonUpdateSerializer(serializers.Serializer):
             raise serializers.ValidationError("Hech qanday student yuborilmadi.")
 
         # Yangi group yuborilsa - uni, yuborilmasa - mavjud group ni oling
-        group_id = attrs.get('group', self.instance.group_id)
+        group_id = attrs.get('group', self.instance.group)
 
-        students = Student.objects.filter(id__in=all_ids, group_id=group_id)
+        students = Student.objects.filter(id__in=all_ids, group=group_id)
 
         if students.count() != len(set(all_ids)):
             raise serializers.ValidationError("Student IDlar noto'g'ri yoki boshqa guruhdan.")
@@ -160,7 +160,7 @@ class LessonUpdateSerializer(serializers.Serializer):
 
         # Avvalgi davomatlarni yangilash
         for student_id in kelgan_ids + sababli_ids:
-            lesson_attendance = LessonAttendance.objects.get(lesson=instance, student_id=student_id)
+            lesson_attendance = LessonAttendance.objects.get(lesson=instance, student=student_id)
             if student_id in kelgan_ids:
                 lesson_attendance.status = 'keldi'  # Kelgan talaba
             else:
@@ -172,7 +172,7 @@ class LessonUpdateSerializer(serializers.Serializer):
         attended_student_ids = set(kelgan_ids + sababli_ids)
         for student in all_students:
             if student.id not in attended_student_ids:
-                lesson_attendance = LessonAttendance.objects.get(lesson=instance, student_id=student.id)
+                lesson_attendance = LessonAttendance.objects.get(lesson=instance, student=student.id)
                 lesson_attendance.status = 'kelmadi'  # Kelmagan talaba
                 lesson_attendance.save()
 
