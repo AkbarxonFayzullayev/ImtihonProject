@@ -12,7 +12,7 @@ from user_auth.serializers import HomeworkReviewSerializer, \
 
 
 class GroupHomeWorkAPIView(APIView):
-    permission_classes = [IsTeacherOrStaffOrAdmin]
+    permission_classes = [IsStudentOrTeacherOrStaffOrAdminUser]
 
     # Barcha guruh uy vazifalarini olish
     def get(self, request):
