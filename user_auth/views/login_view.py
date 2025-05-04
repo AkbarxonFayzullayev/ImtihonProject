@@ -193,8 +193,25 @@ class LogoutView(APIView):
 class AuthMeView(APIView):
     permission_classes = [IsAuthenticated]
 
-    @swagger_auto_schema(responses={200: UserSerializer()})
+    @swagger_auto_schema(responses={200: 'Foydalanuvchi haqida ma’lumot'})
     def get(self, request):
         user = request.user
-        serializer = UserSerializer(user)
-        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+        # Rolni aniqlash
+        if user.is_admin:
+            role = "admin"
+        elif user.is_teacher:
+            role = "teacher"
+        elif user.is_student:
+            role = "student"
+        else:
+            role = "unknown"
+
+        data = {
+            "id": user.id,
+            "phone_number": user.phone_number,
+            "email": user.email,
+            "role": role,
+        }
+
+        return Response(data=data, status=status.HTTP_200_OK)
