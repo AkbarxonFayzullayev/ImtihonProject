@@ -33,8 +33,7 @@ class GroupHomeWorkAPIView(APIView):
             try:
                 teacher = Teacher.objects.get(user=user)  # O'qituvchini olish
                 # 'group_teacher' o'rniga 'teacher'ni filterni to'g'ri yozish
-                queryset = GroupHomeWork.objects.filter(
-                    group__teacher=teacher)  # O'qituvchiga tegishli guruhdagi uy vazifalari
+                queryset = GroupHomeWork.objects.filter(group__teacher=teacher).distinct()  # O'qituvchiga tegishli guruhdagi uy vazifalari
             except Teacher.DoesNotExist:
                 return Response({"detail": "O'qituvchi topilmadi."}, status=status.HTTP_404_NOT_FOUND)
 
