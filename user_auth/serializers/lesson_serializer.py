@@ -130,8 +130,10 @@ class LessonUpdateSerializer(serializers.Serializer):
         if not all_ids:
             raise serializers.ValidationError("Hech qanday student yuborilmadi.")
 
-        group_id = attrs['group']
-        students = Student.objects.filter(id__in=all_ids, group=group_id)
+        # Yangi group yuborilsa - uni, yuborilmasa - mavjud group ni oling
+        group_id = attrs.get('group', self.instance.group_id)
+
+        students = Student.objects.filter(id__in=all_ids, group_id=group_id)
 
         if students.count() != len(set(all_ids)):
             raise serializers.ValidationError("Student IDlar noto'g'ri yoki boshqa guruhdan.")
