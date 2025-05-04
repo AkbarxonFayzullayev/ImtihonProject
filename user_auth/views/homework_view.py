@@ -33,7 +33,7 @@ class GroupHomeWorkAPIView(APIView):
             try:
                 teacher = Teacher.objects.get(user=user)  # O'qituvchini olish
                 # 'group_teacher' o'rniga 'teacher'ni filterni to'g'ri yozish
-                queryset = GroupHomeWork.objects.filter(group__teacher=teacher).distinct()  # O'qituvchiga tegishli guruhdagi uy vazifalari
+                queryset = GroupHomeWork.objects.filter(group__teacher__in=[teacher]).distinct()  # O'qituvchiga tegishli guruhdagi uy vazifalari
             except Teacher.DoesNotExist:
                 return Response({"detail": "O'qituvchi topilmadi."}, status=status.HTTP_404_NOT_FOUND)
 
@@ -115,8 +115,38 @@ class HomeWorkAPIView(APIView):
 
     # Barcha uy vazifalarini olish
     def get(self, request):
-        homeworks = HomeWork.objects.all()
-        serializer = HomeWorkSerializer(homeworks, many=True)
+        user = request.user
+        queryset = None  # Querysetni boshlang'ich qiymatga o'rnatish
+
+        # Talaba uchun uy vazifalarini olish
+        if user.is_student:
+            try:
+                student = Student.objects.get(user=user)  # Talabani olish
+                queryset = HomeWork.objects.filter(
+                    student=student)  # Talabaga tegishli guruhdagi uy vazifalari
+            except Student.DoesNotExist:
+                return Response({"detail": "Talaba topilmadi."}, status=status.HTTP_404_NOT_FOUND)
+
+        # O'qituvchi uchun uy vazifalarini olish
+        elif user.is_teacher:
+            try:
+                teacher = Teacher.objects.get(user=user)  # O'qituvchini olish
+                # O'qituvchining guruhlariga tegishli uy vazifalarini olish
+                queryset = HomeWork.objects.filter(
+                    group_homework__group__teacher__in=[teacher]).distinct()  # O'qituvchiga tegishli guruhdagi uy vazifalari
+            except Teacher.DoesNotExist:
+                return Response({"detail": "O'qituvchi topilmadi."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Admin yoki Staff uchun barcha uy vazifalarini olish
+        elif user.is_superuser or user.is_staff:
+            queryset = HomeWork.objects.all()  # Barcha uy vazifalari
+
+        # Foydalanuvchi turi aniqlanmagan bo'lsa
+        if queryset is None:
+            return Response({"detail": "Foydalanuvchi turi aniqlanmadi."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Serializer yordamida ma'lumotlarni qaytarish
+        serializer = HomeWorkSerializer(queryset, many=True)
         return Response(serializer.data)
 
     # Yangi uy vazifasini yaratish
