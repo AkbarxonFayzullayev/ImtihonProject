@@ -91,8 +91,3 @@ class DepartmentsSerializer(serializers.ModelSerializer):
         model = Departments  # Departament modelini ishlatadi
         fields = '__all__'  # Barcha maydonlarni olish
 
-
-class DepartmentsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Departments
-        fields = '__all__'
