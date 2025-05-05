@@ -177,3 +177,4 @@ class LessonUpdateSerializer(serializers.Serializer):
                 lesson_attendance.save()
 
         return instance  # Yangilangan darsni qaytarish
+

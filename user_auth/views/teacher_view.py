@@ -1,3 +1,4 @@
+from django.db.models.fields import return_None
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.exceptions import NotFound
@@ -8,7 +9,7 @@ from rest_framework.viewsets import ModelViewSet
 from user_auth.add_permissions import IsTeacherUser, IsStaffOrAdminUser
 from ..models import Group, GroupHomeWork, Student, HomeWork, LessonAttendance, Lesson
 from ..models.model_teacher import *
-from ..serializers import TeacherSerializer, TeacherPostSerializer, DepartmentsSerializer
+from ..serializers import TeacherSerializer, TeacherPostSerializer, DepartmentsSerializer, GroupTitleUpdateForTeacher
 from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 
@@ -219,3 +220,20 @@ class TeacherGetAttendanceStatistic(APIView):
             })
 
         return Response(data)
+
+class TeacherUpdateGroupTitle(APIView):
+    permission_classes = [IsTeacherUser]
+    @swagger_auto_schema(request_body=GroupTitleUpdateForTeacher)
+    def patch(self,request,pk):
+        user = request.user
+        teacher = Teacher.objects.get(user=user)
+        groups = Group.objects.filter(teacher__in=[teacher])
+        try:
+            group = Group.objects.get(id__in=groups,pk=pk)
+        except Exception:
+            return Response({"detail": "guruh sizga tegishli emas yozki topilmadi"})
+
+        serializer = GroupTitleUpdateForTeacher(group,data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"detail":"Guruh title muvaffaqiyatli o'zgartirildi. "})

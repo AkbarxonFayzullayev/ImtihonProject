@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from user_auth.models import Teacher, User, Departments, Course
+from user_auth.models import Teacher, User, Departments, Course, Group
 
 
 # TeacherSerializer, o'qituvchi ma'lumotlarini serializatsiya qilish uchun ishlatiladi
@@ -91,3 +91,8 @@ class DepartmentsSerializer(serializers.ModelSerializer):
         model = Departments  # Departament modelini ishlatadi
         fields = '__all__'  # Barcha maydonlarni olish
 
+class GroupTitleUpdateForTeacher(serializers.ModelSerializer):
+    title = serializers.CharField()
+    class Meta:
+        model = Group
+        fields = ["title"]

@@ -53,6 +53,7 @@ urlpatterns = [
     path('teacher_api/get_groups/', TeacherGetGroups.as_view()),
     path('teacher_api/get_homeworks/', TeacherGetHomeworkStatistic.as_view()),
     path('teacher_api/get_attendance/', TeacherGetAttendanceStatistic.as_view()),
+    path('teacher_api/teacher_update_group_title/<int:pk>/', TeacherUpdateGroupTitle.as_view()),
 
     # Student CRUD
     path('student_api/', Student_Api.as_view()),
