@@ -31,7 +31,7 @@ class LessonAttendance(models.Model):
 class GroupHomeWork(models.Model):
     group = models.ForeignKey('user_auth.Group', on_delete=models.RESTRICT)
     title = models.CharField(max_length=200,default="Noma'lum title")
-    lesson = models.ForeignKey('user_auth.Lesson', on_delete=models.RESTRICT,null=True,blank=True)
+    lesson = models.ForeignKey('user_auth.Lesson', on_delete=models.CASCADE,null=True,blank=True)
     file = models.FileField(upload_to='homeworks/', blank=True, null=True)
     deadline = models.DateField(default=date.today)
     descriptions = models.CharField(max_length=400, blank=True, null=True)
