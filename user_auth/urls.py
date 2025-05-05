@@ -51,6 +51,8 @@ urlpatterns = [
     path('teacher_api/<int:pk>/', TeacherDetail.as_view()),
     path('teacher_api/get_group_students/', TeacherGetGroupStudents.as_view()),
     path('teacher_api/get_groups/', TeacherGetGroups.as_view()),
+    path('teacher_api/get_homeworks/', TeacherGetHomeworkStatistic.as_view()),
+    path('teacher_api/get_attendance/', TeacherGetAttendanceStatistic.as_view()),
 
     # Student CRUD
     path('student_api/', Student_Api.as_view()),

@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
 from user_auth.add_permissions import IsTeacherUser, IsStaffOrAdminUser
-from ..models import Group
+from ..models import Group, GroupHomeWork, Student, HomeWork, LessonAttendance, Lesson
 from ..models.model_teacher import *
 from ..serializers import TeacherSerializer, TeacherPostSerializer, DepartmentsSerializer
 from rest_framework.response import Response
@@ -138,3 +138,84 @@ class TeacherGetGroupStudents(APIView):
 
         return Response(response)
 
+class TeacherGetHomeworkStatistic(APIView):
+    permission_classes = [IsTeacherUser]
+
+    def get(self, request):
+        user = request.user
+        if not user.is_teacher:
+            return Response({"detail": "Faqat o‘qituvchilar uchun."}, status=403)
+
+        try:
+            teacher = Teacher.objects.get(user=user)
+        except Teacher.DoesNotExist:
+            return Response({"detail": "Teacher topilmadi."}, status=404)
+
+        teacher_groups = Group.objects.filter(teacher=teacher)
+        group_homeworks = GroupHomeWork.objects.filter(group__in=teacher_groups).select_related('group', 'lesson')
+
+        result = []
+
+        for hw in group_homeworks:
+            all_students = Student.objects.filter(group=hw.group)
+            submitted_ids = HomeWork.objects.filter(group_homework=hw).values_list('student', flat=True)
+
+            submitted_students = all_students.filter(id__in=submitted_ids)
+            not_submitted_students = all_students.exclude(id__in=submitted_ids)
+
+            submitted_dict = {s.id: s.fullname for s in submitted_students}
+            not_submitted_dict = {s.id: s.fullname for s in not_submitted_students}
+
+            total = all_students.count()
+            done = submitted_students.count()
+            percent = round((done / total) * 100, 2) if total > 0 else 0
+
+            result.append({
+                "homework_id": hw.id,
+                "title": hw.title,
+                "group_name": hw.group.title,
+                "submitted_students": submitted_dict,
+                "not_submitted_students": not_submitted_dict,
+                "percent_done": percent
+            })
+
+        return Response(result)
+
+class TeacherGetAttendanceStatistic(APIView):
+    permission_classes = [IsTeacherUser]
+
+    def get(self, request):
+        teacher = Teacher.objects.get(user=request.user)
+        groups = Group.objects.filter(teacher=teacher)
+        lessons = Lesson.objects.filter(group__in=groups)
+
+        data = []
+        for lesson in lessons:
+            attendances = LessonAttendance.objects.filter(lesson=lesson).select_related('student')
+            kelganlar = {}
+            kelmaganlar = {}
+            kechikkanlar = {}
+            sababsizlar = {}
+
+            for att in attendances:
+                if att.status == "bor":
+                    kelganlar[att.student.id] = att.student.fullname
+                elif att.status == "yo'q":
+                    kelmaganlar[att.student.id] = att.student.fullname
+                elif att.status == "kechikkan":
+                    kechikkanlar[att.student.id] = att.student.fullname
+                elif att.status == "sababli":
+                    sababsizlar[att.student.id] = att.student.fullname
+
+            data.append({
+                "lesson_id": lesson.id,
+                "group": lesson.group.title,
+                "date": lesson.date,
+                "lesson": lesson.title,
+                "kelganlar": kelganlar,
+                "kelmaganlar": kelmaganlar,
+                "kechikkanlar": kechikkanlar,
+                "sababsizlar": sababsizlar
+            })
+
+        return Response(data)

@@ -83,3 +83,10 @@ class ParentsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Parents  # Parents modeli
         fields = '__all__'  # Barcha maydonlarni olish
+
+class StudentShortSerializer(serializers.ModelSerializer):
+    fullname = serializers.CharField()
+
+    class Meta:
+        model = Student
+        fields = ['id', 'fullname']
