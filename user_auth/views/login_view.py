@@ -88,6 +88,8 @@ def generate_otp():
     otp = str(random.randint(1000, 9999))
     print(f"Generated OTP: {otp}")
     return otp
+def normalize_phone(phone):
+    return phone.replace(" ", "").replace("-", "").replace("(", "").replace(")", "")
 
 
 # Telefon raqamga OTP yuborish (SMS emas, faqat test uchun kod qaytadi)
@@ -103,7 +105,7 @@ class PhoneSendOTP(APIView):
                 'status': False,
             }, status=status.HTTP_400_BAD_REQUEST)
 
-        phone = str(phone_number)
+        phone = normalize_phone(str(phone_number))
         user = User.objects.filter(phone_number=phone).first()
         if user:
             otp = str(generate_otp())
@@ -128,7 +130,7 @@ class ResetPassword(APIView):
         serializer = VerifySMSSerializer(data=request.data)
 
         if serializer.is_valid():
-            phone_number = serializer.validated_data['phone_number']
+            phone_number = normalize_phone(serializer.validated_data['phone_number'])
             verification_code = serializer.validated_data['verification_code']
             new_password = serializer.validated_data['new_password']
             renew_password = serializer.validated_data['renew_password']
