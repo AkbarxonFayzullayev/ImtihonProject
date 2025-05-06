@@ -137,40 +137,38 @@ class LessonUpdateSerializer(serializers.Serializer):
 
     # Mavjud darsni yangilash
     def update(self, instance, validated_data):
-        instance.title = validated_data.get('title', instance.title)  # Dars nomini yangilash
-        instance.date = validated_data.get('date', instance.date)  # Dars sanasini yangilash
+        instance.title = validated_data.get('title', instance.title)
+        instance.date = validated_data.get('date', instance.date)
 
-        # Jadvalni yangilash
-        table_id = validated_data.get('table', None)
-        if table_id:
+        table = validated_data.get('table', None)
+        if table:
             try:
-                instance.table = Table.objects.get(id=table_id)  # Jadvalni olish
+                instance.table = Table.objects.get(id=table)
             except Table.DoesNotExist:
                 raise serializers.ValidationError("Bunday table mavjud emas.")
 
-        instance.descriptions = validated_data.get('descriptions', instance.descriptions)  # Tavsifni yangilash
+        instance.descriptions = validated_data.get('descriptions', instance.descriptions)
         instance.save()
 
         kelgan_ids = validated_data.get('kelgan_studentlar', [])
         sababli_ids = validated_data.get('sababli_studentlar', [])
+        attended_ids = set(kelgan_ids + sababli_ids)
 
-        # Avvalgi davomatlarni yangilash
-        for student_id in kelgan_ids + sababli_ids:
-            lesson_attendance = LessonAttendance.objects.get(lesson=instance, student=student_id)
-            if student_id in kelgan_ids:
-                lesson_attendance.status = 'keldi'  # Kelgan talaba
-            else:
-                lesson_attendance.status = 'sababli'  # Sababli talaba
-            lesson_attendance.save()
-
-        # Kelmaganlarni yangilash
         all_students = Student.objects.filter(group=instance.group)
-        attended_student_ids = set(kelgan_ids + sababli_ids)
-        for student in all_students:
-            if student.id not in attended_student_ids:
-                lesson_attendance = LessonAttendance.objects.get(lesson=instance, student=student.id)
-                lesson_attendance.status = 'kelmadi'  # Kelmagan talaba
-                lesson_attendance.save()
 
-        return instance  # Yangilangan darsni qaytarish
+        for student in all_students:
+            attendance, created = LessonAttendance.objects.get_or_create(
+                lesson=instance,
+                student=student
+            )
+            if student.id in kelgan_ids:
+                attendance.status = 'keldi'
+            elif student.id in sababli_ids:
+                attendance.status = 'sababli'
+            else:
+                attendance.status = 'kelmadi'
+            attendance.save()
+
+        return instance
+
 
