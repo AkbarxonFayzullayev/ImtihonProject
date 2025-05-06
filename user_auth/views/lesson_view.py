@@ -211,5 +211,5 @@ class LessonFullUpdateView(APIView):
         serializer = LessonUpdateSerializer(lesson, data=request.data, partial=True)
         if serializer.is_valid():
             updated_lesson = serializer.save()
-            return Response(LessonCreateSerializer(updated_lesson).data, status=status.HTTP_200_OK)
+            return Response(LessonSerializer(updated_lesson).data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
