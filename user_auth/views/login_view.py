@@ -199,13 +199,13 @@ class AuthMeView(APIView):
 
         # Rolni aniqlash
         if user.is_admin:
-            role = "admin"
+            role = "Admin"
         elif user.is_teacher:
-            role = "teacher"
+            role = "Teacher"
         elif user.is_student:
-            role = "student"
-        else:
-            role = "unknown"
+            role = "Student"
+        elif user.is_staff:
+            role = "Staff"
 
         data = {
             "id": user.id,

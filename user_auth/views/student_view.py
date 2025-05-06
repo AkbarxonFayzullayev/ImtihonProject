@@ -69,10 +69,10 @@ class StudentDetail(APIView):
         try:
             student = Student.objects.get(pk=pk)  # Talaba ID orqali topiladi
         except Student.DoesNotExist:
-            raise NotFound("Bunday ID ga ega Teacher topilmadi. ")  # Agar talaba topilmasa, xatolik
+            raise NotFound("Bunday ID ga ega Student topilmadi. ")  # Agar talaba topilmasa, xatolik
         student.user.delete()  # Talaba bilan bog'liq foydalanuvchi o'chiriladi
         student.delete()  # Talaba o'chiriladi
-        return Response({"detail": "Teacher va unga tegishli User o'chirildi"}, status=204)
+        return Response({"detail": "Student va unga tegishli User o'chirildi"}, status=204)
 
 
 # ParentsViewSet, ota-onalar ma'lumotlarini boshqarish uchun ViewSet

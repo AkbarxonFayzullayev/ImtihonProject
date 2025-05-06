@@ -196,7 +196,7 @@ class TeacherGetAttendanceStatistic(APIView):
             kelganlar = {}
             kelmaganlar = {}
             kechikkanlar = {}
-            sababsizlar = {}
+            sabablilar = {}
 
             for att in attendances:
                 if att.status == "bor":
@@ -206,7 +206,7 @@ class TeacherGetAttendanceStatistic(APIView):
                 elif att.status == "kechikkan":
                     kechikkanlar[att.student.id] = att.student.fullname
                 elif att.status == "sababli":
-                    sababsizlar[att.student.id] = att.student.fullname
+                    sabablilar[att.student.id] = att.student.fullname
 
             data.append({
                 "lesson_id": lesson.id,
@@ -216,7 +216,7 @@ class TeacherGetAttendanceStatistic(APIView):
                 "kelganlar": kelganlar,
                 "kelmaganlar": kelmaganlar,
                 "kechikkanlar": kechikkanlar,
-                "sababsizlar": sababsizlar
+                "sabablilar": sabablilar
             })
 
         return Response(data)

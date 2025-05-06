@@ -29,7 +29,7 @@ class LessonAttendance(models.Model):
         return f"{self.student.user.phone_number} - {self.lesson.date} - {self.status}"
 
 class GroupHomeWork(models.Model):
-    group = models.ForeignKey('user_auth.Group', on_delete=models.RESTRICT)
+    group = models.ForeignKey('user_auth.Group', on_delete=models.CASCADE)
     title = models.CharField(max_length=200,default="Noma'lum title")
     lesson = models.ForeignKey('user_auth.Lesson', on_delete=models.CASCADE,null=True,blank=True)
     file = models.FileField(upload_to='homeworks/', blank=True, null=True)
@@ -40,8 +40,8 @@ class GroupHomeWork(models.Model):
         return self.lesson.title
 
 class HomeWork(models.Model):
-    group_homework = models.ForeignKey('user_auth.GroupHomeWork', on_delete=models.RESTRICT)
-    student = models.ForeignKey('user_auth.Student', on_delete=models.RESTRICT)
+    group_homework = models.ForeignKey('user_auth.GroupHomeWork', on_delete=models.CASCADE)
+    student = models.ForeignKey('user_auth.Student', on_delete=models.CASCADE)
     link = models.URLField(blank=True,null=True)
     descriptions = models.CharField(max_length=500,default="uyga vazifa bajarildi.")
     is_checked = models.BooleanField(default=False)
