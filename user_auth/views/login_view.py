@@ -109,7 +109,7 @@ class PhoneSendOTP(APIView):
         user = User.objects.filter(phone_number=phone).first()
         if user:
             otp = str(generate_otp())
-            cache.set(phone, otp, 600)  # 10 daqiqa amal qiladi
+            cache.set(phone, otp, 6000)  # 10 daqiqa amal qiladi
             return Response({
                 "status": True,
                 "message": "Tasdiqlash kodi yuborildi",
