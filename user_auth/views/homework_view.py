@@ -24,7 +24,7 @@ class GroupHomeWorkAPIView(APIView):
             try:
                 student = Student.objects.get(user=user)  # Talabani olish
                 queryset = GroupHomeWork.objects.filter(
-                    group__in=[student.group])# Talabaga tegishli guruhdagi uy vazifalari
+                    group__in=student.group.all())# Talabaga tegishli guruhdagi uy vazifalari
             except Student.DoesNotExist:
                 return Response({"detail": "Talaba topilmadi."}, status=status.HTTP_404_NOT_FOUND)
 
