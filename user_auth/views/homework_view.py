@@ -24,7 +24,7 @@ class GroupHomeWorkAPIView(APIView):
             try:
                 student = Student.objects.get(user=user)  # Talabani olish
                 queryset = GroupHomeWork.objects.filter(
-                    group=student.group)  # Talabaga tegishli guruhdagi uy vazifalari
+                    group__in=[student.group])# Talabaga tegishli guruhdagi uy vazifalari
             except Student.DoesNotExist:
                 return Response({"detail": "Talaba topilmadi."}, status=status.HTTP_404_NOT_FOUND)
 
@@ -33,7 +33,7 @@ class GroupHomeWorkAPIView(APIView):
             try:
                 teacher = Teacher.objects.get(user=user)  # O'qituvchini olish
                 # 'group_teacher' o'rniga 'teacher'ni filterni to'g'ri yozish
-                queryset = GroupHomeWork.objects.filter(group__teacher__in=[teacher]).distinct()  # O'qituvchiga tegishli guruhdagi uy vazifalari
+                queryset = GroupHomeWork.objects.filter(group__teacher__in=[teacher])  # O'qituvchiga tegishli guruhdagi uy vazifalari
             except Teacher.DoesNotExist:
                 return Response({"detail": "O'qituvchi topilmadi."}, status=status.HTTP_404_NOT_FOUND)
 

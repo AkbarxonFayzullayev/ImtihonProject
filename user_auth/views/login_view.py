@@ -106,7 +106,7 @@ class PhoneSendOTP(APIView):
         phone = str(phone_number)
         user = User.objects.filter(phone_number=phone).first()
         if user:
-            otp = generate_otp()
+            otp = str(generate_otp())
             cache.set(phone, otp, 600)  # 10 daqiqa amal qiladi
             return Response({
                 "status": True,
