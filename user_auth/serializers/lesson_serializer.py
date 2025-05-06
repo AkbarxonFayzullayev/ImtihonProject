@@ -44,8 +44,6 @@ class LessonCreateSerializer(serializers.Serializer):
         sababli = attrs.get('sababli_studentlar', [])
         all_ids = kelgan + sababli
 
-        if not all_ids:  # Hech qanday talaba yuborilmasa, xato
-            raise serializers.ValidationError("Hech qanday student yuborilmadi.")
 
         group_id = attrs['group']
         students = Student.objects.filter(id__in=all_ids, group=group_id)  # Talabalar guruhiga qarab filtrlash
@@ -127,8 +125,6 @@ class LessonUpdateSerializer(serializers.Serializer):
         sababli = attrs.get('sababli_studentlar', [])
         all_ids = kelgan + sababli
 
-        if not all_ids:
-            raise serializers.ValidationError("Hech qanday student yuborilmadi.")
 
         # Yangi group yuborilsa - uni, yuborilmasa - mavjud group ni oling
         group_id = attrs.get('group', self.instance.group)
